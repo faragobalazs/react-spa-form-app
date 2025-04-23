@@ -1,0 +1,17 @@
+body {
+  background-color: #f5eedd;
+  margin: 0;
+}
+
+.main-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #06202b;
+  padding: 20px;
+}
+
+p {
+  margin: 5px;
+}
