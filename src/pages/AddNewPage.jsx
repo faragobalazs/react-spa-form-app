@@ -23,6 +23,7 @@ const validate = (values) => {
   return errors;
 };
 
+// Form
 function AddNewPage() {
   const [currentId, setCurrentId] = useState(() => nanoid());
 
