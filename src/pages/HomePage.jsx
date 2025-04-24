@@ -1,6 +1,9 @@
+// Imports
 import React from "react";
 
+// Component Definition
 function HomePage({ editPageId }) {
+  //JSX Rendering
   return (
     <div className="main-content">
       <h1> Hello, Jordan!</h1>
@@ -12,4 +15,5 @@ function HomePage({ editPageId }) {
   );
 }
 
+// Export Component
 export default HomePage;

@@ -1,3 +1,4 @@
+// Imports
 import React, { useMemo } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router";
 import { nanoid } from "nanoid";
@@ -7,6 +8,7 @@ import HomePage from "./pages/HomePage";
 import AddNewPage from "./pages/AddNewPage";
 import EditPage from "./pages/EditPage";
 
+// Helper Function
 const getEditPageId = () => {
   const storageKey = "getEditPageId";
   let storeId = localStorage.getItem(storageKey);
@@ -18,9 +20,11 @@ const getEditPageId = () => {
   return storeId;
 };
 
+// Main Application
 function App() {
   const editPageId = useMemo(() => getEditPageId(), []);
 
+  // Render Logic & Router Setup
   return (
     <Router>
       <div className="navbar-container">
@@ -38,6 +42,7 @@ function App() {
           </div>
         </nav>
 
+        {/* Route Views*/}
         <div className="main-content">
           <Routes>
             <Route path="/add" element={<AddNewPage />} />
@@ -51,4 +56,5 @@ function App() {
   );
 }
 
+// Export Component
 export default App;
