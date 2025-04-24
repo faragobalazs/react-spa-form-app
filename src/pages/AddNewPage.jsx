@@ -23,11 +23,7 @@ const validate = (values) => {
   return errors;
 };
 
-<<<<<<< Updated upstream
-// Form
-=======
 // Component Definition & State Management
->>>>>>> Stashed changes
 function AddNewPage() {
   const [currentId, setCurrentId] = useState(() => nanoid());
   const [submitStatus, setSubmitStatus] = useState(null);
