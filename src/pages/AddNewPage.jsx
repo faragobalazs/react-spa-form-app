@@ -166,7 +166,11 @@ function AddNewPage() {
         </div>
 
         {/* Submit Button */}
-        <button type="submit" disabled={!formik.isValid || formik.isSubmitting}>
+        <button
+          type="submit"
+          disabled={!formik.isValid || formik.isSubmitting}
+          className="add-new-submit-button"
+        >
           {formik.isSubmitting ? "Submitting..." : "Submit"}
         </button>
       </form>
