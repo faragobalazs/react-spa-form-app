@@ -1,9 +1,7 @@
-// Imports
 import React, { useState } from "react";
 import { useFormik } from "formik";
 import { nanoid } from "nanoid";
 
-// Validation
 const validate = (values) => {
   const errors = {};
   if (!values.firstName) {
@@ -23,12 +21,10 @@ const validate = (values) => {
   return errors;
 };
 
-// Component Definition & State Management
 function AddNewPage() {
   const [currentId, setCurrentId] = useState(() => nanoid());
   const [submitStatus, setSubmitStatus] = useState(null);
 
-  // Formik Configuration
   const formik = useFormik({
     initialValues: {
       firstName: "",
@@ -80,7 +76,6 @@ function AddNewPage() {
     },
   });
 
-  // JSX Rendering
   return (
     <div className="main-content">
       <h1>Add New Page</h1>
@@ -97,7 +92,6 @@ function AddNewPage() {
           <p>{currentId}</p>
         </div>
 
-        {/* First Name */}
         <div className="form-group">
           <label htmlFor="firstName">First Name</label>
           <input
@@ -114,7 +108,6 @@ function AddNewPage() {
           ) : null}
         </div>
 
-        {/* Last Name */}
         <div className="form-group">
           <label htmlFor="lastName">Last Name</label>
           <input
@@ -131,7 +124,6 @@ function AddNewPage() {
           ) : null}
         </div>
 
-        {/* Email */}
         <div className="form-group">
           <label htmlFor="email">Email Address</label>
           <input
@@ -148,7 +140,6 @@ function AddNewPage() {
           ) : null}
         </div>
 
-        {/* Birth Date */}
         <div className="form-group">
           <label htmlFor="birthDate">Birth Date</label>
           <input
@@ -165,7 +156,6 @@ function AddNewPage() {
           ) : null}
         </div>
 
-        {/* Submit Button */}
         <button
           type="submit"
           disabled={!formik.isValid || formik.isSubmitting}
@@ -178,5 +168,4 @@ function AddNewPage() {
   );
 }
 
-// Export Component
 export default AddNewPage;
