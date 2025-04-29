@@ -1,26 +1,12 @@
 import React, { useMemo } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import { nanoid } from "nanoid";
 
 import "./App.css";
 import HomePage from "./pages/HomePage";
 import AddNewPage from "./pages/AddNewPage";
 import EditPage from "./pages/EditPage";
 
-const getEditPageId = () => {
-  const storageKey = "editPageId";
-  let storeId = localStorage.getItem(storageKey);
-
-  if (!storeId) {
-    storeId = nanoid(5);
-    localStorage.setItem(storageKey, storeId);
-  }
-  return storeId;
-};
-
 function App() {
-  const editPageId = useMemo(() => getEditPageId(), []);
-
   return (
     <Router>
       <div className="app-container">
@@ -34,17 +20,14 @@ function App() {
               <Link to="/add" className="nav-button">
                 Add New
               </Link>
-              <Link to={`/${editPageId}`} className="nav-button">
-                Edit Page
-              </Link>
             </div>
           </nav>
         </div>
         <div className="main-content">
           <Routes>
             <Route path="/add" element={<AddNewPage />} />
-            <Route path={`/${editPageId}`} element={<EditPage />} />
-            <Route path="/" element={<HomePage editPageId={editPageId} />} />
+            <Route path="/edit/:id" element={<EditPage />} />
+            <Route path="/" element={<HomePage />} />
             <Route path="*" element={<div>404 Not Found</div>} />
           </Routes>
         </div>

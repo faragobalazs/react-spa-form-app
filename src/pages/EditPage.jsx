@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useFormik } from "formik";
+import { useParams } from "react-router-dom";
 
 const validateEdit = (values) => {
   const errors = {};
@@ -15,6 +16,7 @@ const validateEdit = (values) => {
 function InlineEditForm({ entry, onSave, onCancel }) {
   const formik = useFormik({
     initialValues: {
+      id: entry.id,
       firstName: entry.firstName,
       lastName: entry.lastName,
       email: entry.email,
@@ -105,6 +107,7 @@ function InlineEditForm({ entry, onSave, onCancel }) {
 }
 
 function EditPage() {
+  const { id } = useParams();
   const [entries, setEntries] = useState([]);
   const [editingEntryId, setEditingEntryId] = useState(null);
 

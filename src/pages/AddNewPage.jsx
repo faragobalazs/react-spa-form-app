@@ -22,11 +22,11 @@ const validate = (values) => {
 };
 
 function AddNewPage() {
-  const [currentId, setCurrentId] = useState(() => nanoid());
   const [submitStatus, setSubmitStatus] = useState(null);
 
   const formik = useFormik({
     initialValues: {
+      id: nanoid(5),
       firstName: "",
       lastName: "",
       email: "",
@@ -35,10 +35,6 @@ function AddNewPage() {
     validate,
     onSubmit: async (values, { resetForm, setSubmitting }) => {
       setSubmitStatus(null);
-      const newEntry = {
-        id: currentId,
-        ...values,
-      };
 
       try {
         const response = await fetch("/api/save-form", {
@@ -46,14 +42,14 @@ function AddNewPage() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(newEntry),
+          body: JSON.stringify(values),
         });
 
         if (!response.ok) {
           let errorData = { message: `HTTP error! status: ${response.status}` };
           try {
             errorData = await response.json();
-          } catch (parseError) {}
+          } catch {}
           throw new Error(
             errorData.message || `HTTP error! status: ${response.status}`
           );
@@ -63,8 +59,7 @@ function AddNewPage() {
           type: "success",
           message: "Data saved successfully!",
         });
-        resetForm();
-        setCurrentId(nanoid());
+        resetForm({ values: { ...formik.initialValues, id: nanoid() } });
       } catch (error) {
         setSubmitStatus({
           type: "error",
@@ -89,7 +84,7 @@ function AddNewPage() {
       <form onSubmit={formik.handleSubmit} className="user-form">
         <div className="form-group">
           <label>Generated ID</label>
-          <p>{currentId}</p>
+          <p>{formik.values.id}</p>
         </div>
 
         <div className="form-group">
