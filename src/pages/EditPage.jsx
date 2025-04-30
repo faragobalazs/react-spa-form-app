@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { useFormik } from "formik";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 const validateEdit = (values) => {
   const errors = {};
@@ -13,211 +13,153 @@ const validateEdit = (values) => {
   return errors;
 };
 
-function InlineEditForm({ entry, onSave, onCancel }) {
-  const formik = useFormik({
-    initialValues: {
-      id: entry.id,
-      firstName: entry.firstName,
-      lastName: entry.lastName,
-      email: entry.email,
-      birthDate: entry.birthDate,
-    },
-    validate: validateEdit,
-    onSubmit: (values, { setSubmitting }) => {
-      onSave(entry.id, values);
-      setSubmitting(false);
-    },
-    enableReinitialize: true,
-  });
-
-  return (
-    <form onSubmit={formik.handleSubmit} className="inline-edit-form">
-      <div className="form-row">
-        <div className="form-group inline">
-          <label htmlFor={`firstName-${entry.id}`}>First Name</label>
-          <input
-            id={`firstName-${entry.id}`}
-            name="firstName"
-            type="text"
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            value={formik.values.firstName}
-            disabled={formik.isSubmitting}
-          />
-        </div>
-        <div className="form-group inline">
-          <label htmlFor={`lastName-${entry.id}`}>Last Name</label>
-          <input
-            id={`lastName-${entry.id}`}
-            name="lastName"
-            type="text"
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            value={formik.values.lastName}
-            disabled={formik.isSubmitting}
-          />
-        </div>
-      </div>
-      <div className="form-row">
-        <div className="form-group inline">
-          <label htmlFor={`email-${entry.id}`}>Email</label>
-          <input
-            id={`email-${entry.id}`}
-            name="email"
-            type="email"
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            value={formik.values.email}
-            disabled={formik.isSubmitting}
-          />
-        </div>
-        <div className="form-group inline">
-          <label htmlFor={`birthDate-${entry.id}`}>Birth Date</label>
-          <input
-            id={`birthDate-${entry.id}`}
-            name="birthDate"
-            type="date"
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            value={formik.values.birthDate}
-            disabled={formik.isSubmitting}
-          />
-        </div>
-      </div>
-
-      <div className="form-actions">
-        <button
-          type="submit"
-          className="button save-button"
-          disabled={!formik.isValid || formik.isSubmitting}
-        >
-          Save
-        </button>
-        <button
-          type="button"
-          className="button cancel-button"
-          onClick={onCancel}
-          disabled={formik.isSubmitting}
-        >
-          Cancel
-        </button>
-      </div>
-    </form>
-  );
-}
-
 function EditPage() {
   const { id } = useParams();
-  const [entries, setEntries] = useState([]);
-  const [editingEntryId, setEditingEntryId] = useState(null);
-
-  const fetchData = useCallback(async () => {
-    setEditingEntryId(null);
-    const response = await fetch("/api/entries");
-    const result = await response.json();
-    setEntries(result.data || []);
-  }, []);
+  const navigate = useNavigate();
+  const [entry, setEntry] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    const fetchEntry = async () => {
+      try {
+        const response = await fetch(`/api/entries/${id}`);
+        const result = await response.json();
+        if (result.data) {
+          setEntry(result.data);
+        } else {
+          setError("Entry not found");
+        }
+      } catch {
+        setError("Failed to fetch entry");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const handleEditClick = (id) => {
-    setEditingEntryId(id);
-  };
+    fetchEntry();
+  }, [id]);
 
-  const handleCancelEdit = () => {
-    setEditingEntryId(null);
-  };
+  const formik = useFormik({
+    initialValues: entry || {
+      firstName: "",
+      lastName: "",
+      email: "",
+      birthDate: "",
+    },
+    enableReinitialize: true,
+    validate: validateEdit,
+    onSubmit: async (values, { setSubmitting }) => {
+      try {
+        const response = await fetch(`/api/entries/${id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(values),
+        });
+        const result = await response.json();
+        if (result.data) {
+          setEntry(result.data);
+          navigate("/records");
+        }
+      } catch {
+        setError("Failed to update entry");
+      } finally {
+        setSubmitting(false);
+      }
+    },
+  });
 
-  const handleSaveEdit = async (idToUpdate, updatedData) => {
-    const response = await fetch(`/api/entries/${idToUpdate}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(updatedData),
-    });
-    const result = await response.json();
-    setEntries((prevEntries) =>
-      prevEntries.map((entry) =>
-        entry.id === idToUpdate ? { ...entry, ...result.data } : entry
-      )
-    );
-    setEditingEntryId(null);
-  };
-
-  const handleDelete = async (idToDelete) => {
-    if (editingEntryId === idToDelete) {
-      setEditingEntryId(null);
-    }
-    await fetch(`/api/entries/${idToDelete}`, { method: "DELETE" });
-    setEntries((prevEntries) =>
-      prevEntries.filter((entry) => entry.id !== idToDelete)
-    );
-  };
+  if (loading) return <div className="main-content">Loading...</div>;
+  if (error) return <div className="main-content">{error}</div>;
+  if (!entry) return <div className="main-content">Entry not found</div>;
 
   return (
     <div className="main-content">
-      <h1>Edit Entries</h1>
-
-      {entries.length === 0 ? (
-        <p>No entries found.</p>
-      ) : (
-        <div className="entries-container">
-          {" "}
-          {entries.map((entry) => (
-            <div
-              key={entry.id}
-              className={`entry-item ${
-                editingEntryId === entry.id ? "editing" : ""
-              }`}
-            >
-              {editingEntryId === entry.id ? (
-                <InlineEditForm
-                  entry={entry}
-                  onSave={handleSaveEdit}
-                  onCancel={handleCancelEdit}
-                />
-              ) : (
-                <>
-                  <div className="entry-details">
-                    <p>
-                      <strong>ID:</strong> {entry.id}
-                    </p>
-                    <p>
-                      <strong>First Name:</strong> {entry.firstName}
-                    </p>
-                    <p>
-                      <strong>Last Name:</strong> {entry.lastName}
-                    </p>
-                    <p>
-                      <strong>Email:</strong> {entry.email}
-                    </p>
-                    <p>
-                      <strong>Birth Date:</strong> {entry.birthDate}
-                    </p>
-                  </div>
-                  <div className="entry-actions">
-                    <button
-                      onClick={() => handleEditClick(entry.id)}
-                      className="button edit-button"
-                      disabled={editingEntryId !== null}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(entry.id)}
-                      className="button delete-button"
-                      disabled={editingEntryId !== null}
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </>
-              )}
-            </div>
-          ))}
+      <h1>Edit Entry</h1>
+      <form onSubmit={formik.handleSubmit} className="edit-form">
+        <div className="form-row">
+          <div className="form-group">
+            <label htmlFor="firstName">First Name</label>
+            <input
+              id="firstName"
+              name="firstName"
+              type="text"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.firstName}
+              disabled={formik.isSubmitting}
+            />
+            {formik.touched.firstName && formik.errors.firstName && (
+              <div className="error">{formik.errors.firstName}</div>
+            )}
+          </div>
+          <div className="form-group">
+            <label htmlFor="lastName">Last Name</label>
+            <input
+              id="lastName"
+              name="lastName"
+              type="text"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.lastName}
+              disabled={formik.isSubmitting}
+            />
+            {formik.touched.lastName && formik.errors.lastName && (
+              <div className="error">{formik.errors.lastName}</div>
+            )}
+          </div>
         </div>
-      )}
+        <div className="form-row">
+          <div className="form-group">
+            <label htmlFor="email">Email</label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.email}
+              disabled={formik.isSubmitting}
+            />
+            {formik.touched.email && formik.errors.email && (
+              <div className="error">{formik.errors.email}</div>
+            )}
+          </div>
+          <div className="form-group">
+            <label htmlFor="birthDate">Birth Date</label>
+            <input
+              id="birthDate"
+              name="birthDate"
+              type="date"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.birthDate}
+              disabled={formik.isSubmitting}
+            />
+            {formik.touched.birthDate && formik.errors.birthDate && (
+              <div className="error">{formik.errors.birthDate}</div>
+            )}
+          </div>
+        </div>
+
+        <div className="form-actions">
+          <button
+            type="submit"
+            className="button save-button"
+            disabled={!formik.isValid || formik.isSubmitting}
+          >
+            Save
+          </button>
+          <button
+            type="button"
+            className="button cancel-button"
+            onClick={() => navigate("/records")}
+            disabled={formik.isSubmitting}
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
     </div>
   );
 }

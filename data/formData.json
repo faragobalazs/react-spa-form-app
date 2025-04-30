@@ -5,5 +5,12 @@
     "lastName": "Farago",
     "email": "balazs@farago.com",
     "birthDate": "2025-04-30"
+  },
+  {
+    "id": "WFctA",
+    "firstName": "Balazs",
+    "lastName": "Farago",
+    "email": "bf@email.com",
+    "birthDate": "2025-04-23"
   }
 ]

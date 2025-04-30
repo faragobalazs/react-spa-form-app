@@ -1,10 +1,11 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 
 import "./App.css";
 import HomePage from "./pages/HomePage";
 import AddNewPage from "./pages/AddNewPage";
 import EditPage from "./pages/EditPage";
+import Records from "./pages/Records";
 
 function App() {
   return (
@@ -17,6 +18,9 @@ function App() {
               <Link to="/" className="nav-button">
                 Home
               </Link>
+              <Link to="/records" className="nav-button">
+                Records
+              </Link>
               <Link to="/add" className="nav-button">
                 Add New
               </Link>
@@ -25,9 +29,10 @@ function App() {
         </div>
         <div className="main-content">
           <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/records" element={<Records />} />
             <Route path="/add" element={<AddNewPage />} />
             <Route path="/edit/:id" element={<EditPage />} />
-            <Route path="/" element={<HomePage />} />
             <Route path="*" element={<div>404 Not Found</div>} />
           </Routes>
         </div>
