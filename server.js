@@ -18,6 +18,13 @@ app.get("/api/entries", async (req, res) => {
     .json({ success: true, data: Array.isArray(data) ? data : [] });
 });
 
+app.get("/api/entries/:id", async (req, res) => {
+  const { id } = req.params;
+  const data = await readData();
+  const entry = data.find((entry) => entry.id === id);
+  res.status(200).json({ success: true, data: entry });
+});
+
 app.post("/api/save-form", async (req, res) => {
   const newEntry = req.body;
   const existingData = await readData();

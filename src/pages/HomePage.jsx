@@ -1,6 +1,6 @@
 import React from "react";
 
-function HomePage({ editPageId }) {
+function HomePage() {
   return (
     <div className="main-content">
       <h1> Hello, Jordan!</h1>

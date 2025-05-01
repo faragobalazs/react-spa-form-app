@@ -41,11 +41,12 @@ function EditPage() {
   }, [id]);
 
   const formik = useFormik({
-    initialValues: entry || {
-      firstName: "",
-      lastName: "",
-      email: "",
-      birthDate: "",
+    initialValues: {
+      id: entry?.id || "",
+      firstName: entry?.firstName || "",
+      lastName: entry?.lastName || "",
+      email: entry?.email || "",
+      birthDate: entry?.birthDate || "",
     },
     enableReinitialize: true,
     validate: validateEdit,
