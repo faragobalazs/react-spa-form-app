@@ -3,8 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 
 import "./App.css";
 import HomePage from "./pages/HomePage";
-import AddNewPage from "./pages/AddNewPage";
-import EditPage from "./pages/EditPage";
+import CreateEditPage from "./pages/CreateEditPage";
 import Records from "./pages/Records";
 
 function App() {
@@ -31,8 +30,8 @@ function App() {
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/records" element={<Records />} />
-            <Route path="/add" element={<AddNewPage />} />
-            <Route path="/edit/:id" element={<EditPage />} />
+            <Route path="/add" element={<CreateEditPage />} />
+            <Route path="/edit/:id" element={<CreateEditPage />} />
             <Route path="*" element={<div>404 Not Found</div>} />
           </Routes>
         </div>
