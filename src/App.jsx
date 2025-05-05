@@ -1,48 +1,38 @@
-import React, { useMemo } from "react";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router";
-import { nanoid } from "nanoid";
+import React from "react";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 
 import "./App.css";
 import HomePage from "./pages/HomePage";
 import AddNewPage from "./pages/AddNewPage";
 import EditPage from "./pages/EditPage";
-
-const getEditPageId = () => {
-  const storageKey = "getEditPageId";
-  let storeId = localStorage.getItem(storageKey);
-
-  if (!storeId) {
-    storeId = nanoid(5);
-    localStorage.setItem(storageKey, storeId);
-  }
-  return storeId;
-};
+import Records from "./pages/Records";
 
 function App() {
-  const editPageId = useMemo(() => getEditPageId(), []);
-
   return (
     <Router>
-      <div className="navbar-container">
-        <nav>
-          <div className="buttons-container">
-            <Link to="/" className="nav-button">
-              Home
-            </Link>
-            <Link to="/add" className="nav-button">
-              Add New Page
-            </Link>
-            <Link to={`/${editPageId}`} className="nav-button">
-              Edit Page
-            </Link>
-          </div>
-        </nav>
-
+      <div className="app-container">
+        {" "}
+        <div className="navbar-container">
+          <nav>
+            <div className="buttons-container">
+              <Link to="/" className="nav-button">
+                Home
+              </Link>
+              <Link to="/records" className="nav-button">
+                Records
+              </Link>
+              <Link to="/add" className="nav-button">
+                Add New
+              </Link>
+            </div>
+          </nav>
+        </div>
         <div className="main-content">
           <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/records" element={<Records />} />
             <Route path="/add" element={<AddNewPage />} />
-            <Route path={`/${editPageId}`} element={<EditPage />} />
-            <Route path="/" element={<HomePage editPageId={editPageId} />} />
+            <Route path="/edit/:id" element={<EditPage />} />
             <Route path="*" element={<div>404 Not Found</div>} />
           </Routes>
         </div>
