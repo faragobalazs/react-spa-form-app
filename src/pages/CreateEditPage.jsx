@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { useFormik } from "formik";
 import { useParams, useNavigate } from "react-router-dom";
 import { nanoid } from "nanoid";
@@ -16,48 +16,53 @@ function CreateEditPage() {
   const [error, setError] = useState(null);
   const [submitStatus, setSubmitStatus] = useState(null);
 
-  const updateFormValues = useCallback((entryData) => {
-    if (!entryData) return;
-    formik.setValues({
-      id: entryData.id,
-      firstName: entryData.firstName,
-      lastName: entryData.lastName,
-      email: entryData.email,
-      birthDate: entryData.birthDate,
-    });
-  }, []);
-
   useEffect(() => {
+    let mounted = true;
+
     if (id) {
       const fetchEntry = async () => {
         try {
           const response = await fetch(`${API_BASE_URL}/api/entries/${id}`);
           const result = await response.json();
-          if (result.data) {
+          if (result.data && mounted) {
             setEntry(result.data);
-            updateFormValues(result.data);
-          } else {
+            formik.setValues({
+              id: result.data.id,
+              firstName: result.data.firstName,
+              lastName: result.data.lastName,
+              email: result.data.email,
+              birthDate: result.data.birthDate,
+            });
+          } else if (mounted) {
             setError("Entry not found");
           }
         } catch {
-          setError("Failed to fetch entry");
+          if (mounted) {
+            setError("Failed to fetch entry");
+          }
         } finally {
-          setLoading(false);
+          if (mounted) {
+            setLoading(false);
+          }
         }
       };
 
       fetchEntry();
     }
-  }, [id, updateFormValues]);
+
+    return () => {
+      mounted = true;
+    };
+  }, [id]);
 
   const formik = useFormik({
     enableReinitialize: false,
     initialValues: {
-      id: entry?.id || nanoid(),
-      firstName: entry?.firstName || "",
-      lastName: entry?.lastName || "",
-      email: entry?.email || "",
-      birthDate: entry?.birthDate || "",
+      id: nanoid(),
+      firstName: "",
+      lastName: "",
+      email: "",
+      birthDate: "",
     },
     validationSchema: formValidationSchema,
     onSubmit: async (values, { setSubmitting, resetForm }) => {
