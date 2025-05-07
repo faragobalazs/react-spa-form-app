@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 function Records() {
+  console.count("Records");
   const [entries, setEntries] = useState([]);
   const navigate = useNavigate();
 

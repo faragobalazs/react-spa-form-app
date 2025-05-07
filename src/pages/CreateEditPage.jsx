@@ -8,12 +8,24 @@ import InputField from "../components/InputField";
 const API_BASE_URL = "http://localhost:3001";
 
 function CreateEditPage() {
+  console.count("CreateEditPage");
   const { id } = useParams();
   const navigate = useNavigate();
   const [entry, setEntry] = useState(null);
   const [loading, setLoading] = useState(id ? true : false);
   const [error, setError] = useState(null);
   const [submitStatus, setSubmitStatus] = useState(null);
+
+  const updateFormValues = useCallback((entryData) => {
+    if (!entryData) return;
+    formik.setValues({
+      id: entryData.id,
+      firstName: entryData.firstName,
+      lastName: entryData.lastName,
+      email: entryData.email,
+      birthDate: entryData.birthDate,
+    });
+  }, []);
 
   useEffect(() => {
     if (id) {
@@ -23,6 +35,7 @@ function CreateEditPage() {
           const result = await response.json();
           if (result.data) {
             setEntry(result.data);
+            updateFormValues(result.data);
           } else {
             setError("Entry not found");
           }
@@ -35,15 +48,16 @@ function CreateEditPage() {
 
       fetchEntry();
     }
-  }, [id]);
+  }, [id, updateFormValues]);
 
   const formik = useFormik({
+    enableReinitialize: false,
     initialValues: {
-      id: id || nanoid(),
-      firstName: "",
-      lastName: "",
-      email: "",
-      birthDate: "",
+      id: entry?.id || nanoid(),
+      firstName: entry?.firstName || "",
+      lastName: entry?.lastName || "",
+      email: entry?.email || "",
+      birthDate: entry?.birthDate || "",
     },
     validationSchema: formValidationSchema,
     onSubmit: async (values, { setSubmitting, resetForm }) => {
@@ -90,25 +104,6 @@ function CreateEditPage() {
       }
     },
   });
-
-  const updateFormValues = useCallback(
-    (entry) => {
-      formik.setValues({
-        id: entry.id,
-        firstName: entry.firstName,
-        lastName: entry.lastName,
-        email: entry.email,
-        birthDate: entry.birthDate,
-      });
-    },
-    [formik]
-  );
-
-  useEffect(() => {
-    if (entry) {
-      updateFormValues(entry);
-    }
-  }, [entry, updateFormValues]);
 
   if (loading) return <div className="main-content">Loading...</div>;
   if (error) return <div className="main-content">{error}</div>;

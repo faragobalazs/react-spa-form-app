@@ -1,6 +1,7 @@
 import React from "react";
 
 function HomePage() {
+  console.count("HomePage");
   return (
     <div className="main-content">
       <h1> Hello, Jordan!</h1>
