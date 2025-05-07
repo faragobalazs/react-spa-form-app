@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useFormik } from "formik";
 import { useParams, useNavigate } from "react-router-dom";
 import { nanoid } from "nanoid";
@@ -16,23 +16,19 @@ function CreateEditPage() {
   const [error, setError] = useState(null);
   const [submitStatus, setSubmitStatus] = useState(null);
 
+  // if id is present, it is an edit page
+  const isEditing = !!id;
+
   useEffect(() => {
     let mounted = true;
 
-    if (id) {
+    if (isEditing) {
       const fetchEntry = async () => {
         try {
           const response = await fetch(`${API_BASE_URL}/api/entries/${id}`);
           const result = await response.json();
           if (result.data && mounted) {
             setEntry(result.data);
-            formik.setValues({
-              id: result.data.id,
-              firstName: result.data.firstName,
-              lastName: result.data.lastName,
-              email: result.data.email,
-              birthDate: result.data.birthDate,
-            });
           } else if (mounted) {
             setError("Entry not found");
           }
@@ -55,14 +51,19 @@ function CreateEditPage() {
     };
   }, [id]);
 
+  // for new record id is generated, and when when submitStatus is changed, id is generated again
+  const newId = useMemo(() => {
+    return nanoid();
+  }, [submitStatus]);
+
   const formik = useFormik({
-    enableReinitialize: false,
+    enableReinitialize: true,
     initialValues: {
-      id: nanoid(),
-      firstName: "",
-      lastName: "",
-      email: "",
-      birthDate: "",
+      id: entry?.id || newId,
+      firstName: entry?.firstName || "",
+      lastName: entry?.lastName || "",
+      email: entry?.email || "",
+      birthDate: entry?.birthDate || "",
     },
     validationSchema: formValidationSchema,
     onSubmit: async (values, { setSubmitting, resetForm }) => {
@@ -70,10 +71,10 @@ function CreateEditPage() {
       setError(null);
 
       try {
-        const url = id
+        const url = isEditing
           ? `${API_BASE_URL}/api/entries/${id}`
           : `${API_BASE_URL}/api/save-form`;
-        const method = id ? "PUT" : "POST";
+        const method = isEditing ? "PUT" : "POST";
 
         const response = await fetch(url, {
           method,
@@ -89,7 +90,7 @@ function CreateEditPage() {
 
         const result = await response.json();
 
-        if (id) {
+        if (isEditing) {
           setEntry(result.data);
           navigate("/records");
         } else {
@@ -97,7 +98,7 @@ function CreateEditPage() {
             type: "success",
             message: "Data saved successfully!",
           });
-          resetForm({ values: { ...formik.initialValues, id: nanoid() } });
+          resetForm();
         }
       } catch (error) {
         setSubmitStatus({
@@ -112,11 +113,12 @@ function CreateEditPage() {
 
   if (loading) return <div className="main-content">Loading...</div>;
   if (error) return <div className="main-content">{error}</div>;
-  if (id && !entry) return <div className="main-content">Entry not found</div>;
+  if (isEditing && !entry)
+    return <div className="main-content">Entry not found</div>;
 
   return (
     <div className="main-content">
-      <h1>{id ? "Edit Entry" : "Add New Entry"}</h1>
+      <h1>{isEditing ? "Edit Entry" : "Add New Entry"}</h1>
 
       {submitStatus && (
         <div className={`submit-status ${submitStatus.type}`}>
@@ -156,9 +158,13 @@ function CreateEditPage() {
             className="button save-button"
             disabled={!formik.isValid || formik.isSubmitting}
           >
-            {formik.isSubmitting ? "Submitting..." : id ? "Save" : "Submit"}
+            {formik.isSubmitting
+              ? "Submitting..."
+              : isEditing
+              ? "Save"
+              : "Submit"}
           </button>
-          {id && (
+          {isEditing && (
             <button
               type="button"
               className="button cancel-button"
