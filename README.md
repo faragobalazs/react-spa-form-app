@@ -1,12 +1,115 @@
-# React + Vite
+# SPA Records Manager
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A Single Page Application for managing records, built with React, Vite, and Recoil.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Create, read, update, and delete records
+- Form validation
+- Responsive design
+- State management with Recoil
+- RESTful API integration
 
-## Expanding the ESLint configuration
+## Tech Stack
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- React 18
+- Vite
+- Recoil (State Management)
+- Axios (API Client)
+- Formik & Yup (Form Handling & Validation)
+- React Router (Routing)
+
+## Prerequisites
+
+- Node.js (v16 or higher)
+- npm or yarn
+
+## Getting Started
+
+1. Clone the repository:
+
+```bash
+git clone <repository-url>
+cd spa
+```
+
+2. Install dependencies:
+
+```bash
+npm install
+# or
+yarn install
+```
+
+3. Set up environment variables:
+
+```bash
+# Copy the example environment file
+cp .env.example .env
+
+# Edit .env with your configuration
+```
+
+Required environment variables:
+
+- `VITE_API_BASE_URL`: Your API base URL (default: http://localhost:3001/api)
+- `VITE_APP_NAME`: Application name
+- `VITE_APP_VERSION`: Application version
+
+Optional environment variables:
+
+- `VITE_ENABLE_SORTING`: Enable/disable sorting feature
+- `VITE_ENABLE_FILTERING`: Enable/disable filtering feature
+- `VITE_API_TIMEOUT`: API request timeout in milliseconds
+- `VITE_MAX_RECORDS_PER_PAGE`: Maximum records per page
+
+4. Start the development server:
+
+```bash
+npm run dev
+# or
+yarn dev
+```
+
+5. Start the backend server:
+
+```bash
+node server.js
+```
+
+The application will be available at `http://localhost:5173`
+
+## Project Structure
+
+```
+spa/
+├── src/
+│   ├── api/          # API client and configuration
+│   ├── components/   # Reusable components
+│   ├── pages/        # Page components
+│   ├── recoil/       # Recoil state management
+│   └── schemas/      # Validation schemas
+├── data/            # Data storage
+├── server.js        # Backend server
+└── vite.config.js   # Vite configuration
+```
+
+## Available Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build
+- `npm run lint` - Run ESLint
+- `npm run format` - Format code with Prettier
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
