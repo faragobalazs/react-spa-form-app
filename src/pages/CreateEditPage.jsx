@@ -4,8 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { nanoid } from "nanoid";
 import { formValidationSchema } from "../schemas/formValidation";
 import InputField from "../components/InputField";
-
-const API_BASE_URL = "http://localhost:3001";
+import { createItem, getItemById, updateItem } from "../api/api";
 
 function CreateEditPage() {
   console.count("CreateEditPage");
@@ -25,8 +24,7 @@ function CreateEditPage() {
     if (isEditing) {
       const fetchEntry = async () => {
         try {
-          const response = await fetch(`${API_BASE_URL}/api/entries/${id}`);
-          const result = await response.json();
+          const result = await getItemById(id);
           if (result.data && mounted) {
             setEntry(result.data);
           } else if (mounted) {
@@ -71,36 +69,29 @@ function CreateEditPage() {
       setError(null);
 
       try {
-        const url = isEditing
-          ? `${API_BASE_URL}/api/entries/${id}`
-          : `${API_BASE_URL}/api/save-form`;
-        const method = isEditing ? "PUT" : "POST";
-
-        const response = await fetch(url, {
-          method,
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(values),
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const result = await response.json();
-
         if (isEditing) {
+          const result = await updateItem(id, values);
           setEntry(result.data);
           navigate("/records");
         } else {
-          setSubmitStatus({
-            type: "success",
-            message: "Data saved successfully!",
-          });
-          resetForm();
+          console.log("Submitting new entry:", values); // Debug log
+          const result = await createItem(values);
+          console.log("Create response:", result); // Debug log
+
+          if (result.success) {
+            setSubmitStatus({
+              type: "success",
+              message: "Data saved successfully!",
+            });
+            resetForm();
+            // Optionally navigate to records page after successful creation
+            // navigate("/records");
+          } else {
+            throw new Error(result.error || "Failed to save data");
+          }
         }
       } catch (error) {
+        console.error("Form submission error:", error); // Debug log
         setSubmitStatus({
           type: "error",
           message: `Failed to ${id ? "update" : "save"} data: ${error.message}`,

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { getAllItems, deleteItem } from "../api/api";
 
 function Records() {
   const [entries, setEntries] = useState([]);
@@ -8,14 +9,7 @@ function Records() {
 
   const fetchData = async () => {
     try {
-      const response = await fetch("/api/entries");
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const result = await response.json();
-      if (!result.success) {
-        throw new Error(result.error || "Failed to fetch entries");
-      }
+      const result = await getAllItems();
       setEntries(result.data || []);
       setError(null);
     } catch (error) {
@@ -35,16 +29,7 @@ function Records() {
 
   const handleDelete = async (idToDelete) => {
     try {
-      const response = await fetch(`/api/entries/${idToDelete}`, {
-        method: "DELETE",
-      });
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const result = await response.json();
-      if (!result.success) {
-        throw new Error(result.error || "Failed to delete entry");
-      }
+      await deleteItem(idToDelete);
       setEntries((prevEntries) =>
         prevEntries.filter((entry) => entry.id !== idToDelete)
       );
