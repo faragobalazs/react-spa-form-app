@@ -78,14 +78,18 @@ function CreateEditPage() {
         } else {
           const result = await createItem(values);
           if (result.success) {
+            setError({ type: "success", message: "Data successfully saved" });
             resetForm();
-            navigate("/records");
+            //navigate("/records");
           } else {
             throw new Error(result.error || "Failed to save data");
           }
         }
       } catch (error) {
-        setError(`Failed to ${id ? "update" : "save"} data: ${error.message}`);
+        setError({
+          type: "error",
+          message: `Failed to ${id ? "update" : "save"} data: ${error.message}`,
+        });
       } finally {
         setSubmitting(false);
       }
@@ -93,13 +97,18 @@ function CreateEditPage() {
   });
 
   if (loading) return <div className="main-content">Loading...</div>;
-  if (error) return <div className="main-content">{error}</div>;
+  if (error?.type === "error")
+    return <div className="main-content">{error.message}</div>;
   if (isEditing && !currentRecord)
     return <div className="main-content">Entry not found</div>;
 
   return (
     <div className="main-content">
       <h1>{isEditing ? "Edit Entry" : "Add New Entry"}</h1>
+
+      {error?.type === "success" && (
+        <div className="success-message">{error.message}</div>
+      )}
 
       <form onSubmit={formik.handleSubmit} className="user-form">
         <div className="form-group">
