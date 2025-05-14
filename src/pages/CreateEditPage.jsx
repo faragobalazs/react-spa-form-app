@@ -9,7 +9,7 @@ import { createItem, getItemById, updateItem } from "../api/api";
 import { currentRecordState, loadingState, errorState } from "../recoil/atoms";
 
 const initialFormValues = {
-  id: "",
+  id: nanoid(),
   firstName: "",
   lastName: "",
   email: "",
@@ -113,7 +113,7 @@ function CreateEditPage() {
       <form onSubmit={formik.handleSubmit} className="user-form">
         <div className="form-group">
           <label>ID</label>
-          <p>{formik.values.id || nanoid()}</p>
+          <p>{formik.values.id}</p>
         </div>
 
         <div className="form-row">
