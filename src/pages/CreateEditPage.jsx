@@ -2,11 +2,12 @@ import React, { useEffect } from "react";
 import { useFormik } from "formik";
 import { useParams, useNavigate } from "react-router-dom";
 import { nanoid } from "nanoid";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { formValidationSchema } from "../schemas/formValidation";
 import InputField from "../components/InputField";
-import { createItem, getItemById, updateItem } from "../api/api";
-import { currentRecordState, loadingState, errorState } from "../recoil/atoms";
+import { createItem, updateItem } from "../api/api";
+import { loadingState, errorState } from "../recoil/atoms";
+import { getRecordById } from "../recoil/selectors";
 
 const initialFormValues = {
   id: nanoid(),
@@ -22,58 +23,26 @@ function CreateEditPage() {
   const isEditing = !!id;
 
   // Recoil state
-  const [currentRecord, setCurrentRecord] = useRecoilState(currentRecordState);
   const [loading, setLoading] = useRecoilState(loadingState);
   const [error, setError] = useRecoilState(errorState);
+  const record = useRecoilValue(getRecordById(id));
 
   useEffect(() => {
-    let mounted = true;
-
-    const fetchEntry = async () => {
-      if (!isEditing) return;
-
-      try {
-        const result = await getItemById(id);
-        if (result.data && mounted) {
-          setCurrentRecord(result.data);
-        } else if (mounted) {
-          setError("Entry not found");
-        }
-      } catch {
-        if (mounted) {
-          setError("Failed to fetch entry");
-        }
-      } finally {
-        if (mounted) {
-          setLoading(false);
-        }
-      }
-    };
-
-    if (isEditing) {
-      setLoading(true);
-      fetchEntry();
-    }
-
-    return () => {
-      mounted = false;
-      setCurrentRecord(null);
-      setError(null);
+    if (record) {
       setLoading(false);
-    };
-  }, [id, isEditing, setCurrentRecord, setError, setLoading]);
+    }
+  }, [record, setLoading]);
 
   const formik = useFormik({
     enableReinitialize: true,
-    initialValues: currentRecord || initialFormValues,
+    initialValues: record || initialFormValues,
     validationSchema: formValidationSchema,
     onSubmit: async (values, { setSubmitting, resetForm }) => {
       setError(null);
 
       try {
         if (isEditing) {
-          const result = await updateItem(id, values);
-          setCurrentRecord(result.data);
+          await updateItem(id, values);
           navigate("/records");
         } else {
           const result = await createItem(values);
@@ -99,7 +68,7 @@ function CreateEditPage() {
   if (loading) return <div className="main-content">Loading...</div>;
   if (error?.type === "error")
     return <div className="main-content">{error.message}</div>;
-  if (isEditing && !currentRecord)
+  if (isEditing && !record)
     return <div className="main-content">Entry not found</div>;
 
   return (
