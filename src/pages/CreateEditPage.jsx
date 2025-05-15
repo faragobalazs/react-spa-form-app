@@ -1,12 +1,12 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useFormik } from "formik";
 import { useParams, useNavigate } from "react-router-dom";
 import { nanoid } from "nanoid";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValueLoadable } from "recoil";
 import { formValidationSchema } from "../schemas/formValidation";
 import InputField from "../components/InputField";
 import { createItem, updateItem } from "../api/api";
-import { loadingState, errorState } from "../recoil/atoms";
+import { errorState } from "../recoil/atoms";
 import { getRecordById } from "../recoil/selectors";
 
 const initialFormValues = {
@@ -23,53 +23,49 @@ function CreateEditPage() {
   const isEditing = !!id;
 
   // Recoil state
-  const [loading, setLoading] = useRecoilState(loadingState);
   const [error, setError] = useRecoilState(errorState);
-  const record = useRecoilValue(getRecordById(id));
-
-  useEffect(() => {
-    if (record) {
-      setLoading(false);
-    }
-  }, [record, setLoading]);
+  const recordLoadable = useRecoilValueLoadable(getRecordById(id));
 
   const formik = useFormik({
     enableReinitialize: true,
-    initialValues: record || initialFormValues,
+    initialValues:
+      isEditing && recordLoadable.state === "hasValue"
+        ? recordLoadable.contents
+        : initialFormValues,
     validationSchema: formValidationSchema,
     onSubmit: async (values, { setSubmitting, resetForm }) => {
       setError(null);
 
-      try {
-        if (isEditing) {
-          await updateItem(id, values);
-          navigate("/records");
-        } else {
-          const result = await createItem(values);
-          if (result.success) {
-            setError({ type: "success", message: "Data successfully saved" });
-            resetForm();
-            //navigate("/records");
-          } else {
-            throw new Error(result.error || "Failed to save data");
-          }
+      if (isEditing) {
+        await updateItem(id, values);
+        navigate("/records");
+      } else {
+        const result = await createItem(values);
+        if (result.success) {
+          setError({ type: "success", message: "Data successfully saved" });
+          resetForm();
+          //navigate("/records");
         }
-      } catch (error) {
-        setError({
-          type: "error",
-          message: `Failed to ${id ? "update" : "save"} data: ${error.message}`,
-        });
-      } finally {
-        setSubmitting(false);
       }
+      setSubmitting(false);
     },
   });
 
-  if (loading) return <div className="main-content">Loading...</div>;
-  if (error?.type === "error")
-    return <div className="main-content">{error.message}</div>;
-  if (isEditing && !record)
+  if (isEditing && recordLoadable.state === "loading") {
+    return <div className="main-content">Loading...</div>;
+  }
+
+  if (isEditing && recordLoadable.state === "hasError") {
+    return <div className="main-content">Error loading record</div>;
+  }
+
+  if (
+    isEditing &&
+    recordLoadable.state === "hasValue" &&
+    !recordLoadable.contents
+  ) {
     return <div className="main-content">Entry not found</div>;
+  }
 
   return (
     <div className="main-content">
