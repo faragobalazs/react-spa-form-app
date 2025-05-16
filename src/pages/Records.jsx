@@ -1,67 +1,36 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useRecoilValueLoadable } from "recoil";
+import { deleteItem } from "../api/api";
+import { sortedRecordsState } from "../recoil/selectors";
 
 function Records() {
-  const [entries, setEntries] = useState([]);
-  const [error, setError] = useState(null);
   const navigate = useNavigate();
-
-  const fetchData = async () => {
-    try {
-      const response = await fetch("/api/entries");
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const result = await response.json();
-      if (!result.success) {
-        throw new Error(result.error || "Failed to fetch entries");
-      }
-      setEntries(result.data || []);
-      setError(null);
-    } catch (error) {
-      console.error("Error fetching entries:", error);
-      setError(error.message);
-      setEntries([]);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const entriesLoadable = useRecoilValueLoadable(sortedRecordsState);
 
   const handleEditClick = (id) => {
     navigate(`/edit/${id}`);
   };
 
   const handleDelete = async (idToDelete) => {
-    try {
-      const response = await fetch(`/api/entries/${idToDelete}`, {
-        method: "DELETE",
-      });
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const result = await response.json();
-      if (!result.success) {
-        throw new Error(result.error || "Failed to delete entry");
-      }
-      setEntries((prevEntries) =>
-        prevEntries.filter((entry) => entry.id !== idToDelete)
-      );
-      setError(null);
-    } catch (error) {
-      console.error("Error deleting entry:", error);
-      setError(error.message);
-    }
+    await deleteItem(idToDelete);
   };
+
+  if (entriesLoadable.state === "loading") {
+    return <div className="main-content">Loading...</div>;
+  }
+
+  if (entriesLoadable.state === "hasError") {
+    return <div className="main-content">Error loading records</div>;
+  }
+
+  const entries = entriesLoadable.contents;
 
   return (
     <div className="main-content">
       <h1>Records Overview</h1>
 
-      {error && <div className="error-message">Error: {error}</div>}
-
-      {!error && entries.length === 0 ? (
+      {entries.length === 0 ? (
         <p>No entries found.</p>
       ) : (
         <div className="entries-container">

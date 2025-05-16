@@ -10,4 +10,3 @@ export const readData = async () => {
 
   return JSON.parse(data);
 };
- 
