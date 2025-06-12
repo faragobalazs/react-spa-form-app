@@ -1,13 +1,19 @@
 import { atom } from "recoil";
 
 // Atom for storing loading state
-export const loadingState = atom({
-  key: "loadingState",
+export const loadingAtom = atom({
+  key: "loadingAtom",
   default: false,
 });
 
 // Atom for storing error state
-export const errorState = atom({
-  key: "errorState",
+export const errorAtom = atom({
+  key: "errorAtom",
   default: null,
+});
+
+// Atom for forcing records refresh
+export const recordsRequestIdAtom = atom({
+  key: "recordsRequestIdAtom",
+  default: 0,
 });

@@ -1,9 +1,10 @@
 import { selector, selectorFamily } from "recoil";
 import { getItemById, getAllItems } from "../api/api";
+import { recordsRequestIdAtom } from "./atoms";
 
-// Selector for getting a record by ID
-export const getRecordById = selectorFamily({
-  key: "getRecordById",
+// SelectorFamily for getting a record by ID
+export const recordSelectorFamily = selectorFamily({
+  key: "recordSelectorFamily",
   get: (id) => async () => {
     if (!id) return null;
     const result = await getItemById(id);
@@ -12,9 +13,10 @@ export const getRecordById = selectorFamily({
 });
 
 // Selector for getting sorted records
-export const sortedRecordsState = selector({
-  key: "sortedRecordsState",
-  get: async () => {
+export const sortedRecordsSelector = selector({
+  key: "sortedRecordsSelector",
+  get: async ({ get }) => {
+    get(recordsRequestIdAtom); // depend on request id for refresh
     const result = await getAllItems();
     const records = result.data || [];
     return [...records].sort((a, b) => {
@@ -27,8 +29,8 @@ export const sortedRecordsState = selector({
 });
 
 // Selector for getting filtered records
-export const filteredRecordsState = selector({
-  key: "filteredRecordsState",
+export const filteredRecordsSelector = selector({
+  key: "filteredRecordsSelector",
   get: async () => {
     const result = await getAllItems();
     return result.data || [];

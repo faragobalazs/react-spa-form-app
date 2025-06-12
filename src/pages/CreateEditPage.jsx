@@ -2,12 +2,16 @@ import React from "react";
 import { useFormik } from "formik";
 import { useParams, useNavigate } from "react-router-dom";
 import { nanoid } from "nanoid";
-import { useRecoilState, useRecoilValueLoadable } from "recoil";
+import {
+  useRecoilState,
+  useRecoilValueLoadable,
+  useSetRecoilState,
+} from "recoil";
 import { formValidationSchema } from "../schemas/formValidation";
 import InputField from "../components/InputField";
 import { createItem, updateItem } from "../api/api";
-import { errorState } from "../recoil/atoms";
-import { getRecordById } from "../recoil/selectors";
+import { errorAtom, recordsRequestIdAtom } from "../recoil/atoms";
+import { recordSelectorFamily } from "../recoil/selectors";
 
 const initialFormValues = {
   id: nanoid(),
@@ -23,15 +27,24 @@ function CreateEditPage() {
   const isEditing = !!id;
 
   // Recoil state
-  const [error, setError] = useRecoilState(errorState);
-  const recordLoadable = useRecoilValueLoadable(getRecordById(id));
+  const [error, setError] = useRecoilState(errorAtom);
+  const recordLoadable = useRecoilValueLoadable(recordSelectorFamily(id));
+  const setRecordsRequestId = useSetRecoilState(recordsRequestIdAtom);
+
+  // Suspense: throw promise if loading, throw error if not found
+  let initialValues = initialFormValues;
+  if (isEditing) {
+    if (recordLoadable.state === "loading") throw recordLoadable.contents;
+    if (recordLoadable.state === "hasError") throw recordLoadable.contents;
+    if (recordLoadable.state === "hasValue") {
+      if (!recordLoadable.contents) throw new Error("Entry not found");
+      initialValues = recordLoadable.contents;
+    }
+  }
 
   const formik = useFormik({
     enableReinitialize: true,
-    initialValues:
-      isEditing && recordLoadable.state === "hasValue"
-        ? recordLoadable.contents
-        : initialFormValues,
+    initialValues,
     validationSchema: formValidationSchema,
     onSubmit: async (values, { setSubmitting, resetForm }) => {
       setError(null);
@@ -43,6 +56,7 @@ function CreateEditPage() {
         const result = await createItem(values);
         if (result.success) {
           setError({ type: "success", message: "Data successfully saved" });
+          setRecordsRequestId((id) => id + 1);
           resetForm();
           //navigate("/records");
         }
@@ -50,22 +64,6 @@ function CreateEditPage() {
       setSubmitting(false);
     },
   });
-
-  if (isEditing && recordLoadable.state === "loading") {
-    return <div className="main-content">Loading...</div>;
-  }
-
-  if (isEditing && recordLoadable.state === "hasError") {
-    return <div className="main-content">Error loading record</div>;
-  }
-
-  if (
-    isEditing &&
-    recordLoadable.state === "hasValue" &&
-    !recordLoadable.contents
-  ) {
-    return <div className="main-content">Entry not found</div>;
-  }
 
   return (
     <div className="main-content">

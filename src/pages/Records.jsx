@@ -2,11 +2,11 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useRecoilValueLoadable } from "recoil";
 import { deleteItem } from "../api/api";
-import { sortedRecordsState } from "../recoil/selectors";
+import { sortedRecordsSelector } from "../recoil/selectors";
 
 function Records() {
   const navigate = useNavigate();
-  const entriesLoadable = useRecoilValueLoadable(sortedRecordsState);
+  const entriesLoadable = useRecoilValueLoadable(sortedRecordsSelector);
 
   const handleEditClick = (id) => {
     navigate(`/edit/${id}`);
@@ -16,13 +16,9 @@ function Records() {
     await deleteItem(idToDelete);
   };
 
-  if (entriesLoadable.state === "loading") {
-    return <div className="main-content">Loading...</div>;
-  }
-
-  if (entriesLoadable.state === "hasError") {
-    return <div className="main-content">Error loading records</div>;
-  }
+  // Suspense: throw promise if loading, throw error if error
+  if (entriesLoadable.state === "loading") throw entriesLoadable.contents;
+  if (entriesLoadable.state === "hasError") throw entriesLoadable.contents;
 
   const entries = entriesLoadable.contents;
 
