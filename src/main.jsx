@@ -3,11 +3,14 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.jsx";
 import { RecoilRoot } from "recoil";
+import { ErrorBoundary } from "./components/ErrorBoundary";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <RecoilRoot>
-      <App />
-    </RecoilRoot>
+    <ErrorBoundary>
+      <RecoilRoot>
+        <App />
+      </RecoilRoot>
+    </ErrorBoundary>
   </StrictMode>
 );
