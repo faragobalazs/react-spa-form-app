@@ -1,12 +1,14 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { useRecoilValueLoadable } from "recoil";
+import { useRecoilValueLoadable, useSetRecoilState } from "recoil";
 import { deleteItem } from "../api/api";
 import { sortedRecordsSelector } from "../recoil/selectors";
+import { recordsRequestIdAtom } from "../recoil/atoms";
 
 function Records() {
   const navigate = useNavigate();
   const entriesLoadable = useRecoilValueLoadable(sortedRecordsSelector);
+  const setRecordsRequestId = useSetRecoilState(recordsRequestIdAtom);
 
   const handleEditClick = (id) => {
     navigate(`/edit/${id}`);
@@ -14,6 +16,7 @@ function Records() {
 
   const handleDelete = async (idToDelete) => {
     await deleteItem(idToDelete);
+    setRecordsRequestId((id) => id + 1);
   };
 
   // Suspense: throw promise if loading, throw error if error

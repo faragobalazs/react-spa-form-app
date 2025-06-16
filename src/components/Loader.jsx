@@ -1,8 +1,8 @@
 import "./Loader.css";
 
-export function Loader({ inline = false }) {
+export function Loader() {
   return (
-    <div className={inline ? "inline-loader-container" : "loader-container"}>
+    <div className="loader-container">
       <span className="loader"></span>
     </div>
   );

@@ -1,25 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import { useFormik } from "formik";
 import { useParams, useNavigate } from "react-router-dom";
 import { nanoid } from "nanoid";
-import {
-  useRecoilState,
-  useRecoilValueLoadable,
-  useSetRecoilState,
-} from "recoil";
+import { useRecoilValueLoadable, useSetRecoilState } from "recoil";
 import { formValidationSchema } from "../schemas/formValidation";
 import InputField from "../components/InputField";
 import { createItem, updateItem } from "../api/api";
-import { errorAtom, recordsRequestIdAtom } from "../recoil/atoms";
+import { recordsRequestIdAtom } from "../recoil/atoms";
 import { recordSelectorFamily } from "../recoil/selectors";
-
-const initialFormValues = {
-  id: nanoid(),
-  firstName: "",
-  lastName: "",
-  email: "",
-  birthDate: "",
-};
 
 function CreateEditPage() {
   const { id } = useParams();
@@ -27,12 +15,22 @@ function CreateEditPage() {
   const isEditing = !!id;
 
   // Recoil state
-  const [error, setError] = useRecoilState(errorAtom);
   const recordLoadable = useRecoilValueLoadable(recordSelectorFamily(id));
   const setRecordsRequestId = useSetRecoilState(recordsRequestIdAtom);
 
+  // For add mode, manage ID in state
+  const [newId, setNewId] = useState(nanoid());
+  // Local state for success message
+  const [success, setSuccess] = useState(false);
+
   // Suspense: throw promise if loading, throw error if not found
-  let initialValues = initialFormValues;
+  let initialValues = {
+    id: newId,
+    firstName: "",
+    lastName: "",
+    email: "",
+    birthDate: "",
+  };
   if (isEditing) {
     if (recordLoadable.state === "loading") throw recordLoadable.contents;
     if (recordLoadable.state === "hasError") throw recordLoadable.contents;
@@ -47,18 +45,19 @@ function CreateEditPage() {
     initialValues,
     validationSchema: formValidationSchema,
     onSubmit: async (values, { setSubmitting, resetForm }) => {
-      setError(null);
-
+      setSuccess(false);
       if (isEditing) {
         await updateItem(id, values);
+        setRecordsRequestId((id) => id + 1);
         navigate("/records");
       } else {
         const result = await createItem(values);
         if (result.success) {
-          setError({ type: "success", message: "Data successfully saved" });
+          setSuccess(true);
           setRecordsRequestId((id) => id + 1);
-          resetForm();
-          //navigate("/records");
+          const nextId = nanoid();
+          setNewId(nextId);
+          resetForm({ values: { ...initialValues, id: nextId } });
         }
       }
       setSubmitting(false);
@@ -69,8 +68,8 @@ function CreateEditPage() {
     <div className="main-content">
       <h1>{isEditing ? "Edit Entry" : "Add New Entry"}</h1>
 
-      {error?.type === "success" && (
-        <div className="success-message">{error.message}</div>
+      {success && (
+        <div className="success-message">Data successfully saved</div>
       )}
 
       <form onSubmit={formik.handleSubmit} className="user-form">
