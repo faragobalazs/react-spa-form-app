@@ -2,11 +2,11 @@ import axios from "axios";
 
 // Create axios instance with default config
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL: "http://localhost:3001",
   headers: {
     "Content-Type": "application/json",
   },
-  timeout: parseInt(import.meta.env.VITE_API_TIMEOUT) || 5000,
+  timeout: 5000,
 });
 
 // Request interceptor

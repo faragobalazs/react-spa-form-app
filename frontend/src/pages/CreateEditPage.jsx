@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import { useFormik } from "formik";
 import { useParams, useNavigate } from "react-router-dom";
-import { nanoid } from "nanoid";
 import { useRecoilValueLoadable, useSetRecoilState } from "recoil";
 import { formValidationSchema } from "../schemas/formValidation";
 import InputField from "../components/InputField";
-import { createItem, updateItem } from "../api/api";
+import { recordApi } from "../api/recordApi";
 import { recordsRequestIdAtom } from "../recoil/atoms";
 import { recordSelectorFamily } from "../recoil/selectors";
 
@@ -18,14 +17,11 @@ function CreateEditPage() {
   const recordLoadable = useRecoilValueLoadable(recordSelectorFamily(id));
   const setRecordsRequestId = useSetRecoilState(recordsRequestIdAtom);
 
-  // For add mode, manage ID in state
-  const [newId, setNewId] = useState(nanoid());
   // Local state for success message
   const [success, setSuccess] = useState(false);
 
   // Suspense: throw promise if loading, throw error if not found
   let initialValues = {
-    id: newId,
     firstName: "",
     lastName: "",
     email: "",
@@ -46,21 +42,24 @@ function CreateEditPage() {
     validationSchema: formValidationSchema,
     onSubmit: async (values, { setSubmitting, resetForm }) => {
       setSuccess(false);
-      if (isEditing) {
-        await updateItem(id, values);
-        setRecordsRequestId((id) => id + 1);
-        navigate("/records");
-      } else {
-        const result = await createItem(values);
-        if (result.success) {
-          setSuccess(true);
+      try {
+        if (isEditing) {
+          await recordApi.updateRecord(id, values);
           setRecordsRequestId((id) => id + 1);
-          const nextId = nanoid();
-          setNewId(nextId);
-          resetForm({ values: { ...initialValues, id: nextId } });
+          navigate("/records");
+        } else {
+          const result = await recordApi.createRecord(values);
+          if (result.success) {
+            setSuccess(true);
+            setRecordsRequestId((id) => id + 1);
+            resetForm();
+          }
         }
+      } catch (error) {
+        console.error("Form submission error:", error);
+      } finally {
+        setSubmitting(false);
       }
-      setSubmitting(false);
     },
   });
 
@@ -73,11 +72,6 @@ function CreateEditPage() {
       )}
 
       <form onSubmit={formik.handleSubmit} className="user-form">
-        <div className="form-group">
-          <label>ID</label>
-          <p>{formik.values.id}</p>
-        </div>
-
         <div className="form-row">
           <InputField label="First Name" name="firstName" formik={formik} />
           <InputField label="Last Name" name="lastName" formik={formik} />
