@@ -25,12 +25,7 @@ exports.getRecord = async (req, res) => {
 
 // Create a new record
 exports.createRecord = async (req, res) => {
-  const record = new Record({
-    firstName: req.body.firstName,
-    lastName: req.body.lastName,
-    email: req.body.email,
-    birthDate: req.body.birthDate,
-  });
+  const record = new Record(req.body);
 
   try {
     const newRecord = await record.save();
@@ -43,17 +38,24 @@ exports.createRecord = async (req, res) => {
 // Update a record
 exports.updateRecord = async (req, res) => {
   try {
-    const record = await Record.findById(req.params.id);
-    if (!record) {
+    const { firstName, lastName, email, birthDate } = req.body;
+
+    if (!firstName || !lastName || !email || !birthDate) {
+      return res
+        .status(400)
+        .json({ message: "Some required fields are missing" });
+    }
+
+    const updatedRecord = await Record.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedRecord) {
       return res.status(404).json({ message: "Record not found" });
     }
 
-    if (req.body.firstName) record.firstName = req.body.firstName;
-    if (req.body.lastName) record.lastName = req.body.lastName;
-    if (req.body.email) record.email = req.body.email;
-    if (req.body.birthDate) record.birthDate = req.body.birthDate;
-
-    const updatedRecord = await record.save();
     res.json(updatedRecord);
   } catch (error) {
     res.status(400).json({ message: error.message });

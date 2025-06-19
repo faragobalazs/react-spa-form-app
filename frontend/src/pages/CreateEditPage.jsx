@@ -13,6 +13,9 @@ function CreateEditPage() {
   const navigate = useNavigate();
   const isEditing = !!id;
 
+  // Destructure API functions for cleaner code
+  const { createRecord, updateRecord } = recordApi;
+
   // Recoil state
   const recordLoadable = useRecoilValueLoadable(recordSelectorFamily(id));
   const setRecordsRequestId = useSetRecoilState(recordsRequestIdAtom);
@@ -44,11 +47,11 @@ function CreateEditPage() {
       setSuccess(false);
       try {
         if (isEditing) {
-          await recordApi.updateRecord(id, values);
+          await updateRecord(id, values);
           setRecordsRequestId((id) => id + 1);
           navigate("/records");
         } else {
-          const result = await recordApi.createRecord(values);
+          const result = await createRecord(values);
           if (result.success) {
             setSuccess(true);
             setRecordsRequestId((id) => id + 1);

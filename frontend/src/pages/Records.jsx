@@ -1,43 +1,23 @@
-import React, { useEffect } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
-import { recordsState, loadingState, errorState } from "../recoil/atoms";
+import React from "react";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { recordsRequestIdAtom } from "../recoil/atoms";
+import { sortedRecordsSelector } from "../recoil/selectors";
 import { recordApi } from "../api/recordApi";
 import { useNavigate } from "react-router-dom";
 
 const Records = () => {
-  const [records, setRecords] = useRecoilState(recordsState);
-  const setLoading = useSetRecoilState(loadingState);
-  const setError = useSetRecoilState(errorState);
+  const records = useRecoilValue(sortedRecordsSelector);
+  const setRecordsRequestId = useSetRecoilState(recordsRequestIdAtom);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const fetchRecords = async () => {
-      setLoading(true);
-      try {
-        const data = await recordApi.getAllRecords();
-        setRecords(data);
-        setError(null);
-      } catch (error) {
-        setError(error.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchRecords();
-  }, [setRecords, setLoading, setError]);
 
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this record?")) {
-      setLoading(true);
       try {
         await recordApi.deleteRecord(id);
-        setRecords(records.filter((record) => record._id !== id));
-        setError(null);
+        // Trigger refresh by incrementing request ID
+        setRecordsRequestId((id) => id + 1);
       } catch (error) {
-        setError(error.message);
-      } finally {
-        setLoading(false);
+        console.error("Error deleting record:", error);
       }
     }
   };

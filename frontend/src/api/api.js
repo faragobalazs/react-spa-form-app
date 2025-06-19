@@ -17,7 +17,7 @@ export const createItem = async (data) => {
 export const getAllItems = async () => {
   try {
     const response = await axiosInstance.get("/entries");
-    //await new Promise((resolve) => setTimeout(resolve, 2000));
+    await new Promise((resolve) => setTimeout(resolve, 2000));
     return response;
   } catch (error) {
     console.error("Get all items error:", error.response || error);

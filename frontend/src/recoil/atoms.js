@@ -1,25 +1,4 @@
 import { atom } from "recoil";
-import { recordApi } from "../api/recordApi";
-
-// Records atom
-export const recordsState = atom({
-  key: "recordsState",
-  default: [],
-  effects: [
-    ({ setSelf }) => {
-      const loadRecords = async () => {
-        try {
-          const records = await recordApi.getAllRecords();
-          setSelf(records);
-        } catch (error) {
-          console.error("Error loading records:", error);
-          setSelf([]);
-        }
-      };
-      loadRecords();
-    },
-  ],
-});
 
 // Selected record atom
 export const selectedRecordState = atom({
