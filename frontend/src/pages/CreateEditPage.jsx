@@ -8,6 +8,13 @@ import { recordApi } from "../api/recordApi";
 import { recordsRequestIdAtom } from "../recoil/atoms";
 import { recordSelectorFamily } from "../recoil/selectors";
 
+// Helper function to format date for HTML date input
+const formatDateForInput = (dateString) => {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  return date.toISOString().split("T")[0];
+};
+
 function CreateEditPage() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -35,7 +42,13 @@ function CreateEditPage() {
     if (recordLoadable.state === "hasError") throw recordLoadable.contents;
     if (recordLoadable.state === "hasValue") {
       if (!recordLoadable.contents) throw new Error("Entry not found");
-      initialValues = recordLoadable.contents;
+      const record = recordLoadable.contents;
+      initialValues = {
+        firstName: record.firstName || "",
+        lastName: record.lastName || "",
+        email: record.email || "",
+        birthDate: formatDateForInput(record.birthDate),
+      };
     }
   }
 
