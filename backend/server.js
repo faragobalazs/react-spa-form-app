@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const recordRoutes = require("./routes/recordRoutes");
+const emailRoutes = require("./routes/emailRoutes");
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -24,6 +25,7 @@ mongoose
 
 // Routes
 app.use("/api/records", recordRoutes);
+app.use("/api/emails", emailRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
