@@ -1,6 +1,6 @@
 import * as Yup from "yup";
 
-export const formValidationSchema = Yup.object({
+export const formValidationSchema = Yup.object().shape({
   firstName: Yup.string()
     .required("First name is required")
     .min(2, "First name must be at least 2 characters")
@@ -10,9 +10,8 @@ export const formValidationSchema = Yup.object({
     .min(2, "Last name must be at least 2 characters")
     .max(50, "Last name must be less than 50 characters"),
   email: Yup.string()
-    .required("Email is required")
     .email("Invalid email address")
-    .max(100, "Email must be less than 100 characters"),
+    .required("Email is required"),
   birthDate: Yup.date()
     .required("Birth date is required")
     .max(new Date(), "Birth date cannot be in the future"),

@@ -19,9 +19,12 @@ const InputField = ({
         onBlur={formik.handleBlur}
         value={formik.values[name]}
         disabled={disabled || formik.isSubmitting}
+        className={
+          formik.touched[name] && formik.errors[name] ? "input-error" : ""
+        }
       />
       {formik.touched[name] && formik.errors[name] && (
-        <div className="error">{formik.errors[name]}</div>
+        <div className="error-message">{formik.errors[name]}</div>
       )}
     </div>
   );
