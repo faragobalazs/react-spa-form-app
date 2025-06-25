@@ -1,13 +1,13 @@
 const nodemailer = require("nodemailer");
 
-// Email configuration
+// Email configuration from environment variables
 const emailConfig = {
-  host: "jordanapps.tech",
-  port: 465,
-  secure: true, // true for 465, false for other ports
+  host: process.env.EMAIL_HOST || "jordanapps.tech",
+  port: parseInt(process.env.EMAIL_PORT) || 465,
+  secure: process.env.MAIL_SECURE === "true" || true, // true for 465, false for other ports
   auth: {
-    user: "noreply@jordanapps.tech",
-    pass: "Q(+ttIt+pgC2",
+    user: process.env.MAIL_USER || "noreply@jordanapps.tech",
+    pass: process.env.MAIL_PASSWORD || "",
   },
 };
 

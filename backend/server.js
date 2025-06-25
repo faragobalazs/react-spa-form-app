@@ -1,3 +1,6 @@
+// Load environment variables
+require("dotenv").config();
+
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -12,8 +15,12 @@ app.use(cors());
 app.use(express.json());
 
 // MongoDB Connection
-const MONGO_URL =
-  "mongodb+srv://jordangergo:tnhrnGCHOuU0baFv@cluster0.x79skbh.mongodb.net/exercise?retryWrites=true&w=majority&appName=Cluster0";
+const MONGO_URL = process.env.MONGO_URL;
+
+if (!MONGO_URL) {
+  console.error("MONGO_URL environment variable is required");
+  process.exit(1);
+}
 
 mongoose
   .connect(MONGO_URL, {

@@ -2,7 +2,41 @@
 
 ## 🚀 Quick Start
 
-### 1. Import Collection and Environment
+### 1. Environment Setup
+
+**Important:** Before testing, ensure your backend environment is properly configured:
+
+1. **Create `.env` file** in the `backend` directory:
+
+   ```bash
+   cp env.example .env
+   ```
+
+2. **Add your credentials** to the `.env` file:
+
+   ```env
+   EMAIL_HOST=jordanapps.tech
+   EMAIL_PORT=465
+   MAIL_SECURE=true
+   MAIL_USER=noreply@jordanapps.tech
+   MAIL_PASSWORD=your_actual_password_here
+   ADMIN_EMAIL=admin@jordanapps.tech
+   MONGO_URL=your_mongodb_connection_string
+   PORT=3001
+   ```
+
+   **⚠️ CRITICAL SECURITY WARNING:**
+
+   - The `MONGO_URL` contains database credentials that could allow full database access
+   - Never share your actual MongoDB connection string
+   - Each developer should use their own database instance for development
+
+3. **Install dotenv** (if not already installed):
+   ```bash
+   npm install dotenv
+   ```
+
+### 2. Import Collection and Environment
 
 1. **Open Postman**
 2. **Import Collection:**
@@ -16,7 +50,7 @@
    - Select `Postman_Environment.json`
    - Select the environment from the dropdown in the top-right corner
 
-### 2. Start the Backend Server
+### 3. Start the Backend Server
 
 ```bash
 cd spa/backend
@@ -127,6 +161,8 @@ The server should start on `http://localhost:3001`
 
 3. **Share files with collaborator:**
    - Send both JSON files via email, Slack, or file sharing
+   - **Also share `env.example`** for environment setup
+   - **Never share your actual `.env` file**
    - Collaborator imports both files in Postman
 
 ### Method 2: Postman Workspace (Recommended)
@@ -175,6 +211,25 @@ The server should start on `http://localhost:3001`
 - `baseUrl`: `https://your-production-domain.com`
 - Update other variables as needed
 
+### Backend Environment Variables
+
+| Variable        | Description                   | Example                 | Security Level |
+| --------------- | ----------------------------- | ----------------------- | -------------- |
+| `EMAIL_HOST`    | SMTP server hostname          | jordanapps.tech         | Low            |
+| `EMAIL_PORT`    | SMTP server port              | 465                     | Low            |
+| `MAIL_SECURE`   | Use SSL/TLS                   | true                    | Low            |
+| `MAIL_USER`     | Email username (from address) | noreply@jordanapps.tech | Medium         |
+| `MAIL_PASSWORD` | Email password                | your_password_here      | **High**       |
+| `ADMIN_EMAIL`   | Default admin email           | admin@jordanapps.tech   | Low            |
+| `MONGO_URL`     | MongoDB connection string     | mongodb+srv://...       | **Critical**   |
+
+### Security Levels:
+
+- **Low**: Public information, safe to share
+- **Medium**: Semi-sensitive, avoid sharing
+- **High**: Sensitive credentials, never share
+- **Critical**: Database access, extremely sensitive
+
 ## 🧪 Testing Workflow
 
 ### Recommended Testing Order:
@@ -191,6 +246,24 @@ The server should start on `http://localhost:3001`
 - Verify email content and formatting
 - Check spam folder if emails don't appear
 
+## 🔐 Security Notes
+
+### Environment Variables
+
+- **Never commit `.env` files to version control**
+- **Use `env.example` for sharing configuration structure**
+- **Each developer should create their own `.env` file**
+- **Keep credentials secure and private**
+- **All email addresses are configurable via environment variables**
+- **MongoDB connection string is CRITICAL - never share it**
+
+### Postman Security
+
+- **Don't include sensitive data in shared collections**
+- **Use environment variables for dynamic values**
+- **Consider using Postman's built-in security features**
+- **Never share collections containing real credentials**
+
 ## 🐛 Troubleshooting
 
 ### Common Issues:
@@ -200,12 +273,15 @@ The server should start on `http://localhost:3001`
    - Check if port 3001 is available
    - Verify all dependencies are installed (`npm install`)
    - Check console for error messages
+   - Ensure `.env` file exists and has correct credentials
+   - Verify `MONGO_URL` is set correctly
 
 2. **Email not sending:**
 
-   - Verify SMTP credentials in `emailConfig.js`
+   - Verify SMTP credentials in `.env` file
    - Check network connectivity
    - Verify email addresses are valid
+   - Ensure `dotenv` is installed and loaded
 
 3. **Collection import fails:**
 
@@ -217,6 +293,7 @@ The server should start on `http://localhost:3001`
    - Ensure environment is selected in top-right dropdown
    - Check variable names match exactly
    - Verify variable values are set
+   - Ensure `.env` file is in the correct location
 
 ## 📱 Postman Mobile App
 
@@ -227,13 +304,6 @@ The server should start on `http://localhost:3001`
 3. **Import collection and environment**
 4. **Test APIs on mobile device**
 
-## 🔐 Security Notes
-
-- **Never commit email credentials to version control**
-- **Use environment variables for sensitive data**
-- **Share collections without sensitive data**
-- **Consider using Postman's built-in security features**
-
 ## 📞 Support
 
 If you encounter issues:
@@ -242,3 +312,5 @@ If you encounter issues:
 2. Verify all environment variables are set correctly
 3. Test individual endpoints to isolate problems
 4. Check the backend logs for detailed error information
+5. Ensure `.env` file is properly configured
+6. Verify MongoDB connection string is correct

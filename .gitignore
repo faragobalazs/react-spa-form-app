@@ -13,6 +13,7 @@ data
 .env.development
 .env.test
 .env.production
+.env.example
 
 # Build output
 dist

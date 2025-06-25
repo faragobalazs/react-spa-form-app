@@ -9,15 +9,43 @@ This module provides email sending capabilities for the Jordan Apps backend usin
 - **Custom Email**: Send custom HTML emails with any content
 - **Email Connection Testing**: Test SMTP connection before sending emails
 
-## Configuration
+## Security Setup
 
-The email configuration is set up in `emailConfig.js` with the following SMTP settings:
+### Environment Variables
 
-- **Host**: jordanapps.tech
-- **Port**: 465
-- **Secure**: true
-- **User**: noreply@jordanapps.tech
-- **Password**: Q(+ttIt+pgC2
+All sensitive configuration is stored in environment variables. Create a `.env` file in the `backend` directory with the following variables:
+
+```env
+# Email Configuration
+EMAIL_HOST=jordanapps.tech
+EMAIL_PORT=465
+MAIL_SECURE=true
+MAIL_USER=noreply@jordanapps.tech
+MAIL_PASSWORD=your_email_password_here
+ADMIN_EMAIL=admin@jordanapps.tech
+
+# MongoDB Configuration
+MONGO_URL=your_mongodb_connection_string_here
+
+# Server Configuration
+PORT=3001
+```
+
+### Security Best Practices
+
+- ✅ **Never commit `.env` files to version control**
+- ✅ **Use environment variables for all sensitive data**
+- ✅ **The `.env` file is already in `.gitignore**
+- ✅ **Share `env.example` with collaborators for setup**
+- ✅ **Centralized configuration for easy maintenance**
+- ✅ **MongoDB credentials are protected from exposure**
+
+### Critical Security Notes
+
+- **MongoDB Connection String**: Contains database credentials that could allow full database access
+- **Email Credentials**: SMTP credentials for sending emails
+- **Never share these credentials** in public repositories or discussions
+- **Each developer should have their own database instance** for development
 
 ## API Endpoints
 
@@ -54,7 +82,7 @@ Content-Type: application/json
     "email": "jane.smith@example.com",
     "birthDate": "1990-05-15"
   },
-  "adminEmail": "admin@jordanapps.tech" // optional
+  "adminEmail": "admin@jordanapps.tech" // optional, defaults to ADMIN_EMAIL env var
 }
 ```
 
@@ -108,9 +136,12 @@ node test-email.js
 
 ## Security
 
-- SMTP credentials are stored in the configuration file
+- SMTP credentials are stored in environment variables
 - Email sending is non-blocking to prevent application slowdowns
 - Input validation is performed on all email endpoints
+- `.env` file is excluded from version control
+- All email addresses are configurable via environment variables
+- MongoDB connection string is protected from exposure
 
 ## Usage Examples
 
@@ -150,8 +181,46 @@ node test-email.js
    }
    ```
 
+## Setup for New Developers
+
+1. **Clone the repository**
+2. **Copy `env.example` to `.env`**:
+   ```bash
+   cp env.example .env
+   ```
+3. **Fill in your actual credentials** in the `.env` file
+4. **Install dependencies**:
+   ```bash
+   npm install
+   ```
+5. **Start the server**:
+   ```bash
+   npm start
+   ```
+
+## Environment Variables Reference
+
+| Variable        | Description                                  | Default                 | Security Level |
+| --------------- | -------------------------------------------- | ----------------------- | -------------- |
+| `EMAIL_HOST`    | SMTP server hostname                         | jordanapps.tech         | Low            |
+| `EMAIL_PORT`    | SMTP server port                             | 465                     | Low            |
+| `MAIL_SECURE`   | Use SSL/TLS                                  | true                    | Low            |
+| `MAIL_USER`     | Email username (also used as "from" address) | noreply@jordanapps.tech | Medium         |
+| `MAIL_PASSWORD` | Email password                               | (required)              | **High**       |
+| `ADMIN_EMAIL`   | Default admin email for notifications        | admin@jordanapps.tech   | Low            |
+| `MONGO_URL`     | MongoDB connection string with credentials   | (required)              | **Critical**   |
+| `PORT`          | Server port                                  | 3001                    | Low            |
+
+### Security Levels:
+
+- **Low**: Public information, safe to share
+- **Medium**: Semi-sensitive, avoid sharing
+- **High**: Sensitive credentials, never share
+- **Critical**: Database access, extremely sensitive
+
 ## Dependencies
 
 - `nodemailer`: For SMTP email sending
+- `dotenv`: For environment variable management
 - `express`: For API routing
 - Built-in Node.js modules for date handling and error management
