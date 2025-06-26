@@ -1,0 +1,204 @@
+{
+  "info": {
+    "name": "Jordan Apps - Email API",
+    "description": "Complete API collection for Jordan Apps including email functionality and record management",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Email Endpoints",
+      "item": [
+        {
+          "name": "Test Email Connection",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/emails/test",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "emails", "test"]
+            },
+            "description": "Test the SMTP connection to verify email functionality is working"
+          },
+          "response": []
+        },
+        {
+          "name": "Send Welcome Email",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userName\": \"John Doe\",\n  \"userEmail\": \"john.doe@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/emails/welcome",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "emails", "welcome"]
+            },
+            "description": "Send a personalized welcome email to a new user"
+          },
+          "response": []
+        },
+        {
+          "name": "Send Record Created Email",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"recordData\": {\n    \"firstName\": \"Jane\",\n    \"lastName\": \"Smith\",\n    \"email\": \"jane.smith@example.com\",\n    \"birthDate\": \"1990-05-15\"\n  },\n  \"adminEmail\": \"admin@jordanapps.tech\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/emails/record-created",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "emails", "record-created"]
+            },
+            "description": "Send a notification email when a new record is created"
+          },
+          "response": []
+        },
+        {
+          "name": "Send Custom Email",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"to\": \"recipient@example.com\",\n  \"subject\": \"Test Custom Email\",\n  \"htmlContent\": \"<h1>Hello from Jordan Apps!</h1><p>This is a test custom email.</p>\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/emails/custom",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "emails", "custom"]
+            },
+            "description": "Send a custom HTML email with any content"
+          },
+          "response": []
+        }
+      ],
+      "description": "All email-related API endpoints"
+    },
+    {
+      "name": "Record Endpoints",
+      "item": [
+        {
+          "name": "Get All Records",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/records",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "records"]
+            },
+            "description": "Retrieve all records from the database"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Single Record",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/records/{{recordId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "records", "{{recordId}}"]
+            },
+            "description": "Retrieve a single record by ID"
+          },
+          "response": []
+        },
+        {
+          "name": "Create New Record",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"Test\",\n  \"lastName\": \"User\",\n  \"email\": \"test.user@example.com\",\n  \"birthDate\": \"1985-03-20\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/records",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "records"]
+            },
+            "description": "Create a new record (will automatically trigger email notification)"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Record",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"Updated\",\n  \"lastName\": \"User\",\n  \"email\": \"updated.user@example.com\",\n  \"birthDate\": \"1985-03-20\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/records/{{recordId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "records", "{{recordId}}"]
+            },
+            "description": "Update an existing record"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Record",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/records/{{recordId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "records", "{{recordId}}"]
+            },
+            "description": "Delete a record by ID"
+          },
+          "response": []
+        }
+      ],
+      "description": "All record management API endpoints"
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3001",
+      "type": "string"
+    },
+    {
+      "key": "recordId",
+      "value": "your-record-id-here",
+      "type": "string"
+    }
+  ]
+}

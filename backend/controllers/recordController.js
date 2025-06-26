@@ -1,4 +1,5 @@
 const Record = require("../models/record");
+const EmailService = require("../emails/emailService");
 
 // Get all records
 exports.getAllRecords = async (req, res) => {
@@ -29,6 +30,15 @@ exports.createRecord = async (req, res) => {
 
   try {
     const newRecord = await record.save();
+
+    // Send email notification (non-blocking)
+    try {
+      await EmailService.sendRecordCreatedEmail(newRecord);
+    } catch (emailError) {
+      console.error("Failed to send record created email:", emailError);
+      // Don't fail the request if email fails
+    }
+
     res.status(201).json(newRecord);
   } catch (error) {
     res.status(400).json({ message: error.message });

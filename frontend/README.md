@@ -52,7 +52,7 @@ cp .env.example .env
 
 Required environment variables:
 
-- `VITE_API_BASE_URL`: Your API base URL (default: http://localhost:3001/api)
+- `VITE_API_BASE_URL`: Your API base URL (default: http://localhost:3003/api)
 - `VITE_APP_NAME`: Application name
 - `VITE_APP_VERSION`: Application version
 
