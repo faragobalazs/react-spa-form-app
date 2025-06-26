@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Create axios instance with default config
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:3003",
+  baseURL: import.meta.env.VITE_API_BASE_URL,
   headers: {
     "Content-Type": "application/json",
   },
@@ -12,11 +12,6 @@ const axiosInstance = axios.create({
 // Request interceptor
 axiosInstance.interceptors.request.use(
   (config) => {
-    // You can add auth token here if needed
-    // const token = localStorage.getItem('token');
-    // if (token) {
-    //   config.headers.Authorization = `Bearer ${token}`;
-    // }
     console.log("Request config:", config); // Debug log
     return config;
   },

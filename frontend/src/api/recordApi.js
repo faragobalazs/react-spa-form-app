@@ -5,7 +5,7 @@ export const recordApi = {
   // Get all records
   getAllRecords: async () => {
     try {
-      const response = await axiosInstance.get("/api/records");
+      const response = await axiosInstance.get("/records");
       return response;
     } catch (error) {
       console.error("Get all records error:", error);
@@ -16,7 +16,7 @@ export const recordApi = {
   // Get single record
   getRecord: async (id) => {
     try {
-      const response = await axiosInstance.get(`/api/records/${id}`);
+      const response = await axiosInstance.get(`/records/${id}`);
       return response;
     } catch (error) {
       console.error("Get record error:", error);
@@ -27,7 +27,7 @@ export const recordApi = {
   // Create new record
   createRecord: async (recordData) => {
     try {
-      const response = await axiosInstance.post("/api/records", {
+      const response = await axiosInstance.post("/records", {
         firstName: recordData.firstName,
         lastName: recordData.lastName,
         email: recordData.email,
@@ -43,7 +43,7 @@ export const recordApi = {
   // Update record
   updateRecord: async (id, recordData) => {
     try {
-      const response = await axiosInstance.put(`/api/records/${id}`, {
+      const response = await axiosInstance.put(`/records/${id}`, {
         firstName: recordData.firstName,
         lastName: recordData.lastName,
         email: recordData.email,
@@ -59,7 +59,7 @@ export const recordApi = {
   // Delete record
   deleteRecord: async (id) => {
     try {
-      const response = await axiosInstance.delete(`/api/records/${id}`);
+      const response = await axiosInstance.delete(`/records/${id}`);
       return response;
     } catch (error) {
       console.error("Delete record error:", error);
