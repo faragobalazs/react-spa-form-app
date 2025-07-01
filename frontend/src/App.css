@@ -1,5 +1,5 @@
 nav {
-  background-color: #282828;
+  background-color: #161d21;
   padding-top: 20px;
   padding-bottom: 20px;
   padding-left: 20px;
@@ -13,7 +13,7 @@ nav {
 .nav-button {
   display: inline-block;
   padding: 10px 15px;
-  background-color: #f5eedd;
+  background-color: #9eade6;
   color: #06202b;
   text-decoration: none;
   border-radius: 10px;
@@ -25,7 +25,7 @@ nav {
 }
 
 .nav-button:hover {
-  background-color: #e0d8c6;
+  background-color: #c2cbef;
   opacity: 0.95;
 }
 
@@ -61,7 +61,7 @@ nav {
 
 .add-new-submit-button {
   padding: 10px 15px;
-  background-color: #077a7d;
+  background-color: black;
   color: #f5eedd;
   border: none;
   border-radius: 4px;
@@ -157,7 +157,7 @@ button[type="submit"]:disabled {
 
 .record-label {
   font-weight: bold;
-  color: black;
+  color: white;
   margin: 0 0 0.25rem 0;
 }
 

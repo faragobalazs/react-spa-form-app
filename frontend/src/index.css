@@ -1,5 +1,5 @@
 body {
-  background-color: #f5eedd;
+  background-color: #1f282e;
   margin: 0;
 }
 
@@ -8,7 +8,7 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  color: #06202b;
+  color: white;
   padding: 20px;
 }
 

@@ -18,6 +18,9 @@
     "formik": "^2.4.6",
     "mongoose": "^8.16.0",
     "nanoid": "^5.1.5",
+    "primeflex": "^3.3.1",
+    "primeicons": "^6.0.1",
+    "primereact": "^10.5.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-error-boundary": "^6.0.0",
@@ -27,7 +30,6 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.22.0",
-    "@rollup/rollup-linux-x64-gnu": "^4.44.1",
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.4",
