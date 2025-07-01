@@ -15,15 +15,6 @@ const notFound = require("./middleware/not-found");
 const app = express();
 const PORT = process.env.PORT;
 
-// Debug: Check environment variables
-console.log("Environment variables loaded:");
-console.log("PORT:", process.env.PORT);
-console.log("MONGO_URL exists:", !!process.env.MONGO_URL);
-console.log(
-  "MONGO_URL length:",
-  process.env.MONGO_URL ? process.env.MONGO_URL.length : 0
-);
-
 // Middleware
 app.use(cors());
 app.use(express.json());

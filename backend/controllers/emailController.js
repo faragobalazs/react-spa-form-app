@@ -1,5 +1,6 @@
 const EmailService = require("../emails/emailService");
 const { BadRequestError, UnprocessableEntityError } = require("../errors");
+const { StatusCodes } = require("http-status-codes");
 
 // Test email connection
 exports.testEmailConnection = async (req, res) => {
@@ -220,116 +221,67 @@ exports.testEmailTemplate = async (req, res) => {
 
 // Send system alert
 exports.sendSystemAlert = async (req, res) => {
-  try {
-    const { alertType, message, details } = req.body;
+  const { alertType, message, details } = req.body;
 
-    if (!alertType || !message) {
-      return res.status(400).json({
-        success: false,
-        message: "alertType and message are required",
-      });
-    }
-
-    const result = await EmailService.sendSystemAlert(
-      alertType,
-      message,
-      details
-    );
-    res.json(result);
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Failed to send system alert",
-      error: error.message,
-    });
+  if (!alertType || !message) {
+    throw new BadRequestError("alertType and message are required");
   }
+
+  const result = await EmailService.sendSystemAlert(
+    alertType,
+    message,
+    details
+  );
+  res.json(result);
 };
 
 // Send bulk welcome emails
 exports.sendBulkWelcomeEmails = async (req, res) => {
-  try {
-    const { users } = req.body;
+  const { users } = req.body;
 
-    if (!users || !Array.isArray(users) || users.length === 0) {
-      return res.status(400).json({
-        success: false,
-        message: "users array is required and must not be empty",
-      });
-    }
-
-    // Validate all users have required fields
-    const invalidUsers = users.filter((user) => !user.name || !user.email);
-    if (invalidUsers.length > 0) {
-      return res.status(400).json({
-        success: false,
-        message: "All users must have name and email fields",
-        invalidUsers,
-      });
-    }
-
-    // Validate all email addresses
-    const invalidEmails = users.filter(
-      (user) => !EmailService.validateEmail(user.email)
-    );
-    if (invalidEmails.length > 0) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid email addresses found",
-        invalidEmails,
-      });
-    }
-
-    const result = await EmailService.sendBulkWelcomeEmails(users);
-    res.json(result);
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Failed to send bulk welcome emails",
-      error: error.message,
-    });
+  if (!users || !Array.isArray(users) || users.length === 0) {
+    throw new BadRequestError("users array is required and must not be empty");
   }
+
+  // Validate all users have required fields
+  const invalidUsers = users.filter((user) => !user.name || !user.email);
+  if (invalidUsers.length > 0) {
+    throw new BadRequestError("All users must have name and email fields");
+  }
+
+  // Validate all email addresses
+  const invalidEmails = users.filter(
+    (user) => !EmailService.validateEmail(user.email)
+  );
+  if (invalidEmails.length > 0) {
+    throw new BadRequestError("Invalid email addresses found");
+  }
+
+  const result = await EmailService.sendBulkWelcomeEmails(users);
+  res.json(result);
 };
 
 // Get email configuration (non-sensitive info)
 exports.getEmailConfig = async (req, res) => {
-  try {
-    const config = EmailService.getEmailConfig();
-    res.json({
-      success: true,
-      config,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Failed to get email configuration",
-      error: error.message,
-    });
-  }
+  const config = EmailService.getEmailConfig();
+  res.json({
+    success: true,
+    config,
+  });
 };
 
 // Validate email address
 exports.validateEmail = async (req, res) => {
-  try {
-    const { email } = req.body;
+  const { email } = req.body;
 
-    if (!email) {
-      return res.status(400).json({
-        success: false,
-        message: "email is required",
-      });
-    }
-
-    const isValid = EmailService.validateEmail(email);
-    res.json({
-      success: true,
-      email,
-      isValid,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Failed to validate email",
-      error: error.message,
-    });
+  if (!email) {
+    throw new BadRequestError("email is required");
   }
+
+  const isValid = EmailService.validateEmail(email);
+  res.json({
+    success: true,
+    email,
+    isValid,
+  });
 };

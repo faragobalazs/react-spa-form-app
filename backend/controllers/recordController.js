@@ -1,6 +1,7 @@
 const Record = require("../models/record");
 const EmailService = require("../emails/emailService");
 const { NotFoundError, BadRequestError } = require("../errors");
+const { StatusCodes } = require("http-status-codes");
 
 // Get all records
 exports.getAllRecords = async (req, res) => {
@@ -32,7 +33,7 @@ exports.createRecord = async (req, res) => {
     // Don't fail the request if email fails
   }
 
-  res.status(201).json(newRecord);
+  res.status(StatusCodes.CREATED).json(newRecord);
 };
 
 // Update a record
