@@ -7,16 +7,8 @@ const InputCalendarField = ({
   formik,
   disabled = false,
   className = "",
-  placeholder = "",
-  dateFormat = "dd/mm/yy",
-  showIcon = true,
-  showButtonBar = false,
-  minDate,
-  maxDate,
-  variant = "outlined",
   size = "normal", // "small", "normal", "large"
-  showTime = false,
-  timeOnly = false,
+  ...props
 }) => {
   const getSizeClass = () => {
     switch (size) {
@@ -39,15 +31,6 @@ const InputCalendarField = ({
         onChange={(e) => formik.setFieldValue(name, e.value)}
         onBlur={formik.handleBlur}
         disabled={disabled || formik.isSubmitting}
-        placeholder={placeholder}
-        dateFormat={dateFormat}
-        showIcon={showIcon}
-        showButtonBar={showButtonBar}
-        minDate={minDate}
-        maxDate={maxDate}
-        variant={variant}
-        showTime={showTime}
-        timeOnly={timeOnly}
         className={`${getSizeClass()} ${
           formik.touched[name] && formik.errors[name] ? "p-invalid" : ""
         }`}
@@ -56,6 +39,7 @@ const InputCalendarField = ({
             ? `${name}-error`
             : undefined
         }
+        {...props}
       />
       {formik.touched[name] && formik.errors[name] && (
         <small id={`${name}-error`} className="p-error">

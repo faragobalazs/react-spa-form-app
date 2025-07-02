@@ -7,10 +7,8 @@ const InputTextField = ({
   formik,
   disabled = false,
   className = "",
-  placeholder = "",
-  keyfilter,
-  variant = "outlined",
   size = "normal", // "small", "normal", "large"
+  ...props
 }) => {
   const getSizeClass = () => {
     switch (size) {
@@ -33,9 +31,6 @@ const InputTextField = ({
         onChange={formik.handleChange}
         onBlur={formik.handleBlur}
         disabled={disabled || formik.isSubmitting}
-        placeholder={placeholder}
-        keyfilter={keyfilter}
-        variant={variant}
         className={`${getSizeClass()} ${
           formik.touched[name] && formik.errors[name] ? "p-invalid" : ""
         }`}
@@ -44,6 +39,7 @@ const InputTextField = ({
             ? `${name}-error`
             : undefined
         }
+        {...props}
       />
       {formik.touched[name] && formik.errors[name] && (
         <small id={`${name}-error`} className="p-error">

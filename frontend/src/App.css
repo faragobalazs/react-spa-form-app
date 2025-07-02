@@ -1,8 +1,31 @@
+/* App Container Layout */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
 nav {
   background-color: #161d21;
   padding-top: 20px;
   padding-bottom: 20px;
   padding-left: 20px;
+  padding-right: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.3s ease;
+}
+
+/* Light theme navbar */
+.light nav {
+  background-color: #ffffff;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+/* Dark theme navbar */
+.dark nav {
+  background-color: #161d21;
 }
 
 .buttons-container {
@@ -27,6 +50,26 @@ nav {
 .nav-button:hover {
   background-color: #c2cbef;
   opacity: 0.95;
+}
+
+/* Light theme nav buttons */
+.light .nav-button {
+  background-color: #4a90e2;
+  color: white;
+}
+
+.light .nav-button:hover {
+  background-color: #357abd;
+}
+
+/* Dark theme nav buttons */
+.dark .nav-button {
+  background-color: #9eade6;
+  color: #06202b;
+}
+
+.dark .nav-button:hover {
+  background-color: #c2cbef;
 }
 
 .user-form {
@@ -202,4 +245,487 @@ button[type="submit"]:disabled {
 .no-records {
   text-align: center;
   margin-top: 1rem;
+}
+
+/* Footer Styles */
+.footer {
+  background-color: #161d21;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  padding: 0 20px;
+  transition: background-color 0.3s ease;
+}
+
+/* Light theme footer */
+.light .footer {
+  background-color: #ffffff;
+  color: #333;
+  border-top: 1px solid #e0e0e0;
+}
+
+/* Dark theme footer */
+.dark .footer {
+  background-color: #161d21;
+  color: white;
+}
+
+.footer-content {
+  text-align: center;
+}
+
+.footer-content p {
+  margin: 0;
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+/* Theme-specific styles for other components */
+.light .record-card {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  color: #333;
+}
+
+.dark .record-card {
+  background-color: #161d21;
+  border: 1px solid #444;
+  color: white;
+}
+
+.light .record-label {
+  color: #333;
+}
+
+.dark .record-label {
+  color: white;
+}
+
+.light .form-group label {
+  color: #333;
+}
+
+.dark .form-group label {
+  color: white;
+}
+
+.light .form-group input {
+  background-color: white;
+  color: #333;
+  border: 1px solid #ccc;
+}
+
+.dark .form-group input {
+  background-color: #2a2a2a;
+  color: white;
+  border: 1px solid #444;
+}
+
+/* Theme-specific styles for PrimeReact components */
+.light .p-card {
+  background-color: #ffffff;
+  color: #333;
+  border: 1px solid #e0e0e0;
+}
+
+.dark .p-card {
+  background-color: #161d21;
+  color: white;
+  border: 1px solid #444;
+}
+
+.light .p-card .p-card-body {
+  background-color: #ffffff;
+  color: #333;
+}
+
+.dark .p-card .p-card-body {
+  background-color: #161d21;
+  color: white;
+}
+
+/* Add New Entry form specific styling */
+.light .p-card.add-entry-card {
+  background-color: #ffffff;
+  color: #333;
+  border: 1px solid #e0e0e0;
+}
+
+.dark .p-card.add-entry-card {
+  background-color: #161d21;
+  color: white;
+  border: 1px solid #444;
+}
+
+.light .p-card.add-entry-card .p-card-body {
+  background-color: #ffffff;
+  color: #333;
+}
+
+.dark .p-card.add-entry-card .p-card-body {
+  background-color: #161d21;
+  color: white;
+}
+
+/* Input fields */
+.light .p-inputtext {
+  background-color: white;
+  color: #333;
+  border: 1px solid #ccc;
+}
+
+.dark .p-inputtext {
+  background-color: #2a2a2a;
+  color: white;
+  border: 1px solid #444;
+}
+
+/* Placeholder styles */
+.light .p-inputtext::placeholder {
+  color: #666;
+  opacity: 1;
+}
+
+.dark .p-inputtext::placeholder {
+  color: #aaa;
+  opacity: 1;
+}
+
+/* Webkit browsers (Chrome, Safari, Edge) */
+.light .p-inputtext::-webkit-input-placeholder {
+  color: #666;
+  opacity: 1;
+}
+
+.dark .p-inputtext::-webkit-input-placeholder {
+  color: #aaa;
+  opacity: 1;
+}
+
+/* Firefox */
+.light .p-inputtext::-moz-placeholder {
+  color: #666;
+  opacity: 1;
+}
+
+.dark .p-inputtext::-moz-placeholder {
+  color: #aaa;
+  opacity: 1;
+}
+
+/* IE/Edge */
+.light .p-inputtext:-ms-input-placeholder {
+  color: #666;
+  opacity: 1;
+}
+
+.dark .p-inputtext:-ms-input-placeholder {
+  color: #aaa;
+  opacity: 1;
+}
+
+.light .p-inputtext:focus {
+  border-color: #4a90e2;
+  box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+}
+
+.dark .p-inputtext:focus {
+  border-color: #9eade6;
+  box-shadow: 0 0 0 2px rgba(158, 173, 230, 0.2);
+}
+
+/* Calendar component */
+.light .p-calendar {
+  background-color: white;
+}
+
+.dark .p-calendar {
+  background-color: #2a2a2a;
+}
+
+.light .p-calendar .p-inputtext {
+  background-color: white;
+  color: #333;
+}
+
+.dark .p-calendar .p-inputtext {
+  background-color: #2a2a2a;
+  color: white;
+}
+
+/* Calendar popup */
+.light .p-datepicker {
+  background-color: white;
+  color: #333;
+  border: 1px solid #e0e0e0;
+}
+
+.dark .p-datepicker {
+  background-color: #2a2a2a;
+  color: white;
+  border: 1px solid #444;
+}
+
+.light .p-datepicker .p-datepicker-header {
+  background-color: #f8f9fa;
+  color: #333;
+}
+
+.dark .p-datepicker .p-datepicker-header {
+  background-color: #3a3a3a;
+  color: white;
+}
+
+/* Calendar table */
+.light .p-datepicker table {
+  background-color: white;
+  color: #333;
+}
+
+.dark .p-datepicker table {
+  background-color: #2a2a2a;
+  color: white;
+}
+
+.light .p-datepicker td {
+  color: #333;
+}
+
+.dark .p-datepicker td {
+  color: white;
+}
+
+.light .p-datepicker td > span {
+  color: #333;
+}
+
+.dark .p-datepicker td > span {
+  color: white;
+}
+
+.light .p-datepicker td > span:hover {
+  background-color: #e9ecef;
+}
+
+.dark .p-datepicker td > span:hover {
+  background-color: #3a3a3a;
+}
+
+.light .p-datepicker td > span.p-highlight {
+  background-color: #4a90e2;
+  color: white;
+}
+
+.dark .p-datepicker td > span.p-highlight {
+  background-color: #9eade6;
+  color: #06202b;
+}
+
+/* Calendar navigation buttons */
+.light .p-datepicker .p-datepicker-header button {
+  color: #333;
+}
+
+.dark .p-datepicker .p-datepicker-header button {
+  color: white;
+}
+
+.light .p-datepicker .p-datepicker-header button:hover {
+  background-color: #e9ecef;
+}
+
+.dark .p-datepicker .p-datepicker-header button:hover {
+  background-color: #3a3a3a;
+}
+
+/* Calendar icon */
+.light .p-calendar .p-inputtext + i {
+  color: #333;
+}
+
+.dark .p-calendar .p-inputtext + i {
+  color: white;
+}
+
+/* Overlay panel */
+.light .p-overlaypanel {
+  background-color: white;
+  color: #333;
+  border: 1px solid #e0e0e0;
+}
+
+.dark .p-overlaypanel {
+  background-color: #2a2a2a;
+  color: white;
+  border: 1px solid #444;
+}
+
+/* Shadow for cards */
+.light .shadow-3 {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.dark .shadow-3 {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3),
+    0 2px 4px -1px rgba(0, 0, 0, 0.2);
+}
+
+/* Buttons */
+.light .p-button {
+  background-color: #4a90e2;
+  color: white;
+  border: 1px solid #4a90e2;
+}
+
+.light .p-button:hover {
+  background-color: #357abd;
+  border-color: #357abd;
+}
+
+.light .p-button.p-button-outlined {
+  background-color: transparent;
+  color: #4a90e2;
+  border: 1px solid #4a90e2;
+}
+
+.light .p-button.p-button-outlined:hover {
+  background-color: #4a90e2;
+  color: white;
+}
+
+/* Light theme disabled button */
+.light .p-button:disabled {
+  background-color: #cccccc;
+  color: #666666;
+  border-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.dark .p-button {
+  background-color: #9eade6;
+  color: #06202b;
+  border: 1px solid #9eade6;
+}
+
+.dark .p-button:hover {
+  background-color: #c2cbef;
+  border-color: #c2cbef;
+}
+
+.dark .p-button.p-button-outlined {
+  background-color: transparent;
+  color: #9eade6;
+  border: 1px solid #9eade6;
+}
+
+.dark .p-button.p-button-outlined:hover {
+  background-color: #9eade6;
+  color: #06202b;
+}
+
+/* Dark theme disabled button */
+.dark .p-button:disabled {
+  background-color: #666666;
+  color: #999999;
+  border-color: #666666;
+  cursor: not-allowed;
+}
+
+/* Message component */
+.light .p-message {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.dark .p-message {
+  background-color: #1e3a1e;
+  color: #4ade80;
+  border: 1px solid #166534;
+}
+
+/* Labels */
+.light label {
+  color: #333;
+  font-weight: 600;
+}
+
+.dark label {
+  color: white;
+  font-weight: 600;
+}
+
+/* Error messages */
+.light .p-error {
+  color: #dc3545;
+}
+
+.dark .p-error {
+  color: #ff6b6b;
+}
+
+/* Invalid input styling */
+.light .p-invalid {
+  border-color: #dc3545;
+}
+
+.dark .p-invalid {
+  border-color: #ff6b6b;
+}
+
+.light .p-invalid:focus {
+  box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.2);
+}
+
+.dark .p-invalid:focus {
+  box-shadow: 0 0 0 2px rgba(255, 107, 107, 0.2);
+}
+
+/* Form container */
+.light .form-container {
+  background-color: white;
+  color: #333;
+}
+
+.dark .form-container {
+  background-color: #2a2a2a;
+  color: white;
+}
+
+/* Icons */
+.light .pi {
+  color: #4a90e2;
+}
+
+.dark .pi {
+  color: #9eade6;
+}
+
+/* Text colors */
+.light .text-900 {
+  color: #333 !important;
+}
+
+.dark .text-900 {
+  color: white !important;
+}
+
+.light .text-primary {
+  color: #4a90e2 !important;
+}
+
+.dark .text-primary {
+  color: #9eade6 !important;
+}
+
+/* Surface colors */
+.light .surface-border {
+  border-color: #e0e0e0 !important;
+}
+
+.dark .surface-border {
+  border-color: #444 !important;
 }

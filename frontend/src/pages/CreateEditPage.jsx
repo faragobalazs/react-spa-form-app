@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useFormik } from "formik";
 import { useParams, useNavigate } from "react-router-dom";
-import { useRecoilValueLoadable, useSetRecoilState } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { formValidationSchema } from "../schemas/formValidation";
 import InputTextField from "../components/InputTextField";
 import InputCalendarField from "../components/InputCalendarField";
@@ -12,48 +12,24 @@ import { recordApi } from "../api/recordApi";
 import { recordsRequestIdAtom } from "../recoil/atoms";
 import { recordSelectorFamily } from "../recoil/selectors";
 
-// Helper function to format date for Calendar component
-const formatDateForCalendar = (dateString) => {
-  if (!dateString) return null;
-  return new Date(dateString);
-};
-
 function CreateEditPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const isEditing = !!id;
 
-  // Destructure API functions for cleaner code
-  const { createRecord, updateRecord } = recordApi;
-
-  // Recoil state
-  const recordLoadable = useRecoilValueLoadable(recordSelectorFamily(id));
+  // Use useRecoilValue directly
+  const record = useRecoilValue(recordSelectorFamily(id));
   const setRecordsRequestId = useSetRecoilState(recordsRequestIdAtom);
-
-  // Local state for success message
+  const { createRecord, updateRecord } = recordApi;
   const [success, setSuccess] = useState(false);
 
-  // Suspense: throw promise if loading, throw error if not found
-  let initialValues = {
-    firstName: "",
-    lastName: "",
-    email: "",
-    birthDate: "",
+  // Unified initialValues, using record for both create and edit
+  const initialValues = {
+    firstName: record?.firstName ?? "",
+    lastName: record?.lastName ?? "",
+    email: record?.email ?? "",
+    birthDate: record?.birthDate ?? "",
   };
-  if (isEditing) {
-    if (recordLoadable.state === "loading") throw recordLoadable.contents;
-    if (recordLoadable.state === "hasError") throw recordLoadable.contents;
-    if (recordLoadable.state === "hasValue") {
-      if (!recordLoadable.contents) throw new Error("Entry not found");
-      const record = recordLoadable.contents;
-      initialValues = {
-        firstName: record.firstName || "",
-        lastName: record.lastName || "",
-        email: record.email || "",
-        birthDate: formatDateForCalendar(record.birthDate),
-      };
-    }
-  }
 
   const formik = useFormik({
     enableReinitialize: true,
@@ -84,7 +60,7 @@ function CreateEditPage() {
 
   return (
     <div className="flex justify-content-center align-items-center min-h-screen p-4">
-      <Card className="w-full max-w-4xl shadow-3">
+      <Card className="w-full max-w-4xl shadow-3 add-entry-card">
         <div className="flex flex-column gap-4">
           <div className="flex align-items-center gap-2">
             <i

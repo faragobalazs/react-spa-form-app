@@ -13,7 +13,8 @@ import "primeicons/primeicons.css";
 //primeflex
 import "primeflex/primeflex.css";
 
-//primereact theme
+//primereact themes - both light and dark
+import "primereact/resources/themes/viva-light/theme.css";
 import "primereact/resources/themes/viva-dark/theme.css";
 
 createRoot(document.getElementById("root")).render(
