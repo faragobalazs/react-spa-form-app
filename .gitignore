@@ -33,3 +33,6 @@ yarn-error.log*
 # System files
 .DS_Store
 Thumbs.db
+
+# Example and reference folders
+_example_kanban/

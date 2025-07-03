@@ -1,56 +1,35 @@
 import React, { useState } from "react";
 import { useFormik } from "formik";
 import { useParams, useNavigate } from "react-router-dom";
-import { useRecoilValueLoadable, useSetRecoilState } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { formValidationSchema } from "../schemas/formValidation";
-import InputField from "../components/InputField";
+import InputTextField from "../components/InputTextField";
+import InputCalendarField from "../components/InputCalendarField";
+import { Button } from "primereact/button";
+import { Card } from "primereact/card";
+import { Message } from "primereact/message";
 import { recordApi } from "../api/recordApi";
 import { recordsRequestIdAtom } from "../recoil/atoms";
 import { recordSelectorFamily } from "../recoil/selectors";
-
-// Helper function to format date for HTML date input
-const formatDateForInput = (dateString) => {
-  if (!dateString) return "";
-  const date = new Date(dateString);
-  return date.toISOString().split("T")[0];
-};
 
 function CreateEditPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const isEditing = !!id;
 
-  // Destructure API functions for cleaner code
-  const { createRecord, updateRecord } = recordApi;
-
-  // Recoil state
-  const recordLoadable = useRecoilValueLoadable(recordSelectorFamily(id));
+  // Use useRecoilValue directly
+  const record = useRecoilValue(recordSelectorFamily(id));
   const setRecordsRequestId = useSetRecoilState(recordsRequestIdAtom);
-
-  // Local state for success message
+  const { createRecord, updateRecord } = recordApi;
   const [success, setSuccess] = useState(false);
 
-  // Suspense: throw promise if loading, throw error if not found
-  let initialValues = {
-    firstName: "",
-    lastName: "",
-    email: "",
-    birthDate: "",
+  // Unified initialValues, using record for both create and edit
+  const initialValues = {
+    firstName: record?.firstName ?? "",
+    lastName: record?.lastName ?? "",
+    email: record?.email ?? "",
+    birthDate: record?.birthDate ? new Date(record.birthDate) : "",
   };
-  if (isEditing) {
-    if (recordLoadable.state === "loading") throw recordLoadable.contents;
-    if (recordLoadable.state === "hasError") throw recordLoadable.contents;
-    if (recordLoadable.state === "hasValue") {
-      if (!recordLoadable.contents) throw new Error("Entry not found");
-      const record = recordLoadable.contents;
-      initialValues = {
-        firstName: record.firstName || "",
-        lastName: record.lastName || "",
-        email: record.email || "",
-        birthDate: formatDateForInput(record.birthDate),
-      };
-    }
-  }
 
   const formik = useFormik({
     enableReinitialize: true,
@@ -58,80 +37,135 @@ function CreateEditPage() {
     validationSchema: formValidationSchema,
     onSubmit: async (values, { setSubmitting, resetForm }) => {
       setSuccess(false);
-      try {
-        if (isEditing) {
-          await updateRecord(id, values);
+
+      if (isEditing) {
+        await updateRecord(id, values);
+        setRecordsRequestId((id) => id + 1);
+        navigate("/records");
+      } else {
+        const result = await createRecord(values);
+        if (result.success) {
+          setSuccess(true);
           setRecordsRequestId((id) => id + 1);
-          navigate("/records");
-        } else {
-          const result = await createRecord(values);
-          if (result.success) {
-            setSuccess(true);
-            setRecordsRequestId((id) => id + 1);
-            resetForm();
-          }
+          resetForm();
         }
-      } catch (error) {
-        console.error("Form submission error:", error);
-      } finally {
-        setSubmitting(false);
       }
+
+      setSubmitting(false);
     },
   });
 
   return (
-    <div className="main-content">
-      <h1>{isEditing ? "Edit Entry" : "Add New Entry"}</h1>
+    <div className="flex justify-content-center align-items-center min-h-screen p-4">
+      <Card className="w-full max-w-4xl shadow-3 add-entry-card">
+        <div className="flex flex-column gap-4">
+          <div className="flex align-items-center gap-2">
+            <i
+              className={`pi ${
+                isEditing ? "pi-pencil" : "pi-plus"
+              } text-2xl text-primary`}
+            ></i>
+            <h1 className="text-3xl font-bold text-900 m-0">
+              {isEditing ? "Edit Entry" : "Add New Entry"}
+            </h1>
+          </div>
 
-      {success && (
-        <div className="success-message">Data successfully saved</div>
-      )}
-
-      <form onSubmit={formik.handleSubmit} className="user-form">
-        <div className="form-row">
-          <InputField label="First Name" name="firstName" formik={formik} />
-          <InputField label="Last Name" name="lastName" formik={formik} />
-        </div>
-
-        <div className="form-row">
-          <InputField
-            label="Email Address"
-            name="email"
-            type="email"
-            formik={formik}
-          />
-          <InputField
-            label="Birth Date"
-            name="birthDate"
-            type="date"
-            formik={formik}
-          />
-        </div>
-
-        <div className="form-actions">
-          <button
-            type="submit"
-            className="button save-button"
-            disabled={!formik.isValid || formik.isSubmitting}
-          >
-            {formik.isSubmitting
-              ? "Submitting..."
-              : isEditing
-              ? "Save"
-              : "Submit"}
-          </button>
-          {isEditing && (
-            <button
-              type="button"
-              className="button cancel-button"
-              onClick={() => navigate("/records")}
-              disabled={formik.isSubmitting}
-            >
-              Cancel
-            </button>
+          {success && (
+            <Message
+              severity="success"
+              text="Data successfully saved"
+              className="w-full"
+            />
           )}
+
+          <form
+            onSubmit={formik.handleSubmit}
+            className="flex flex-column gap-4"
+          >
+            <div className="grid">
+              <div className="col-12 md:col-6">
+                <InputTextField
+                  label="First Name"
+                  name="firstName"
+                  formik={formik}
+                  placeholder="Enter your first name"
+                  variant="outlined"
+                />
+              </div>
+              <div className="col-12 md:col-6">
+                <InputTextField
+                  label="Last Name"
+                  name="lastName"
+                  formik={formik}
+                  placeholder="Enter your last name"
+                  variant="outlined"
+                />
+              </div>
+            </div>
+
+            <div className="grid">
+              <div className="col-12 md:col-6">
+                <InputTextField
+                  label="Email Address"
+                  name="email"
+                  formik={formik}
+                  placeholder="Enter your email address"
+                  variant="outlined"
+                />
+              </div>
+              <div className="col-12 md:col-6">
+                <InputCalendarField
+                  label="Birth Date"
+                  name="birthDate"
+                  formik={formik}
+                  placeholder="Select your birth date"
+                  variant="outlined"
+                  showIcon={true}
+                  dateFormat="dd/mm/yy"
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-content-end gap-3 pt-3 border-top-1 surface-border">
+              {isEditing && (
+                <Button
+                  type="button"
+                  label="Cancel"
+                  icon="pi pi-times"
+                  severity="secondary"
+                  outlined
+                  onClick={() => navigate("/records")}
+                  disabled={formik.isSubmitting}
+                />
+              )}
+              <Button
+                type="submit"
+                label={
+                  formik.isSubmitting
+                    ? "Submitting..."
+                    : isEditing
+                    ? "Save Changes"
+                    : "Submit"
+                }
+                icon={
+                  formik.isSubmitting
+                  ? "pi pi-spinner pi-spin"
+                  : isEditing
+                  ? "pi pi-check"
+                  : "pi pi-send"
+                }
+                pt={{
+                  icon: {
+                    className: "text-white",
+                  },
+                }}
+                disabled={!formik.isValid || formik.isSubmitting}
+                loading={formik.isSubmitting}
+              />
+            </div>
+          </form>
         </div>
-      </form>
+      </Card>
     </div>
   );
 }

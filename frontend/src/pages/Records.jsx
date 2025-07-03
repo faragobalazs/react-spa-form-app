@@ -27,41 +27,43 @@ const Records = () => {
   };
 
   if (records.length === 0) {
-    return <div className="text-center mt-4">No records found</div>;
+    return <div className="no-records">No records found</div>;
   }
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Records</h1>
-      <div className="grid gap-4">
+    <div className="records-container">
+      <h1 className="records-title">Records</h1>
+      <div className="records-grid">
         {records.map((record) => (
-          <div key={record._id} className="border p-4 rounded shadow">
-            <div className="grid grid-cols-2 gap-4">
+          <div key={record._id} className="record-card">
+            <div className="record-fields">
               <div>
-                <p className="font-semibold">Name:</p>
-                <p>
+                <p className="record-label">Name:</p>
+                <p className="record-value">
                   {record.firstName} {record.lastName}
                 </p>
               </div>
               <div>
-                <p className="font-semibold">Email:</p>
-                <p>{record.email}</p>
+                <p className="record-label">Email:</p>
+                <p className="record-value">{record.email}</p>
               </div>
               <div>
-                <p className="font-semibold">Birth Date:</p>
-                <p>{new Date(record.birthDate).toLocaleDateString()}</p>
+                <p className="record-label">Birth Date:</p>
+                <p className="record-value">
+                  {new Date(record.birthDate).toLocaleDateString()}
+                </p>
               </div>
             </div>
-            <div className="mt-4 flex gap-2">
+            <div className="record-actions">
               <button
                 onClick={() => handleEdit(record._id)}
-                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                className="record-edit-btn"
               >
                 Edit
               </button>
               <button
                 onClick={() => handleDelete(record._id)}
-                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                className="record-delete-btn"
               >
                 Delete
               </button>

@@ -1,6 +1,17 @@
 body {
-  background-color: #f5eedd;
+  background-color: #1f282e;
   margin: 0;
+  transition: background-color 0.3s ease;
+}
+
+/* Light theme */
+body.light {
+  background-color: #f5f5f5;
+}
+
+/* Dark theme */
+body.dark {
+  background-color: #1f282e;
 }
 
 .main-content {
@@ -8,8 +19,20 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  color: #06202b;
+  color: white;
   padding: 20px;
+  flex-grow: 1;
+  transition: color 0.3s ease;
+}
+
+/* Light theme content */
+.light .main-content {
+  color: #333;
+}
+
+/* Dark theme content */
+.dark .main-content {
+  color: white;
 }
 
 p {

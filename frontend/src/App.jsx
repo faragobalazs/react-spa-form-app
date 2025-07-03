@@ -1,7 +1,8 @@
-import React, { Suspense } from "react";
+import React, { Suspense, useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import { Loader } from "./components/Loader";
 import { ErrorBoundary } from "./components/ErrorBoundary";
+import ThemeSwitcher from "./components/ThemeSwitcher";
 
 import "./App.css";
 import HomePage from "./pages/HomePage";
@@ -10,9 +11,24 @@ import Records from "./pages/Records";
 import { Spinner as SpinnerPage } from "./pages/Spinner";
 
 function App() {
+  const [theme, setTheme] = useState(() => {
+    // Get theme from localStorage or default to 'dark'
+    return localStorage.getItem("theme") || "dark";
+  });
+
+  useEffect(() => {
+    // Apply theme to body and save to localStorage
+    document.body.className = theme;
+    localStorage.setItem("theme", theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prevTheme) => (prevTheme === "dark" ? "light" : "dark"));
+  };
+
   return (
     <Router>
-      <div className="app-container">
+      <div className={`app-container ${theme}`}>
         <div className="navbar-container">
           <nav>
             <div className="buttons-container">
@@ -26,9 +42,10 @@ function App() {
                 Add New
               </Link>
               <Link to="/spinner" className="nav-button">
-                Spinner
+                BB-8
               </Link>
             </div>
+            <ThemeSwitcher theme={theme} onToggle={toggleTheme} />
           </nav>
         </div>
         <div className="main-content">
@@ -62,6 +79,11 @@ function App() {
             <Route path="*" element={<div>404 Not Found</div>} />
           </Routes>
         </div>
+        <footer className="footer">
+          <div className="footer-content">
+            <p>&copy; 2025</p>
+          </div>
+        </footer>
       </div>
     </Router>
   );
