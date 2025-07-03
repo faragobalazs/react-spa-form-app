@@ -28,7 +28,7 @@ function CreateEditPage() {
     firstName: record?.firstName ?? "",
     lastName: record?.lastName ?? "",
     email: record?.email ?? "",
-    birthDate: record?.birthDate ?? "",
+    birthDate: record?.birthDate ? new Date(record.birthDate) : "",
   };
 
   const formik = useFormik({
@@ -37,24 +37,21 @@ function CreateEditPage() {
     validationSchema: formValidationSchema,
     onSubmit: async (values, { setSubmitting, resetForm }) => {
       setSuccess(false);
-      try {
-        if (isEditing) {
-          await updateRecord(id, values);
+
+      if (isEditing) {
+        await updateRecord(id, values);
+        setRecordsRequestId((id) => id + 1);
+        navigate("/records");
+      } else {
+        const result = await createRecord(values);
+        if (result.success) {
+          setSuccess(true);
           setRecordsRequestId((id) => id + 1);
-          navigate("/records");
-        } else {
-          const result = await createRecord(values);
-          if (result.success) {
-            setSuccess(true);
-            setRecordsRequestId((id) => id + 1);
-            resetForm();
-          }
+          resetForm();
         }
-      } catch (error) {
-        console.error("Form submission error:", error);
-      } finally {
-        setSubmitting(false);
       }
+
+      setSubmitting(false);
     },
   });
 
@@ -152,11 +149,16 @@ function CreateEditPage() {
                 }
                 icon={
                   formik.isSubmitting
-                    ? "pi pi-spinner pi-spin"
-                    : isEditing
-                    ? "pi pi-check"
-                    : "pi pi-send"
+                  ? "pi pi-spinner pi-spin"
+                  : isEditing
+                  ? "pi pi-check"
+                  : "pi pi-send"
                 }
+                pt={{
+                  icon: {
+                    className: "text-white",
+                  },
+                }}
                 disabled={!formik.isValid || formik.isSubmitting}
                 loading={formik.isSubmitting}
               />
